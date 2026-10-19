@@ -1,0 +1,15 @@
+.git
+.gitignore
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.vscode
+.idea
+.qodo
+casting_data
+casting_data.zip
+*.zip
+*.tar.gz
+*.log

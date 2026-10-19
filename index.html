@@ -1,0 +1,2003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PredictGuard AI — Industrial Predictive Maintenance Command Center. Dual-model AI diagnostics for casting defect detection and machine sensor failure prediction.">
+    <meta name="theme-color" content="#070908">
+    <title>PredictGuard AI — Predictive Maintenance Command Center</title>
+
+    <!-- Google Fonts for High-End Industrial AI Aesthetics -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-base: #070908;
+            --bg-surface: #0e1310;
+            --bg-card: rgba(17, 24, 20, 0.75);
+            --bg-card-hover: rgba(22, 31, 26, 0.85);
+            --bg-card-subtle: #121814;
+            --bg-input: #0a0e0c;
+
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-medium: rgba(163, 230, 53, 0.2);
+            --border-highlight: rgba(163, 230, 53, 0.5);
+
+            --accent: #a3e635;
+            --accent-glow: rgba(163, 230, 53, 0.25);
+            --accent-light: #bef264;
+            --accent-dark: #365314;
+            --accent-surface: rgba(163, 230, 53, 0.08);
+
+            --success: #22c55e;
+            --success-bg: rgba(34, 197, 94, 0.12);
+            --success-border: rgba(34, 197, 94, 0.35);
+
+            --danger: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.12);
+            --danger-border: rgba(239, 68, 68, 0.4);
+
+            --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.12);
+
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+
+            --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', Consolas, Monaco, monospace;
+
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+
+            --shadow-card: 0 12px 32px -8px rgba(0, 0, 0, 0.7);
+            --shadow-glow: 0 0 24px -4px rgba(163, 230, 53, 0.22);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            background-image: 
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(163, 230, 53, 0.06), transparent 70%),
+                radial-gradient(circle at 100% 100%, rgba(34, 197, 94, 0.03), transparent 50%);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Ambient scanline texture */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0.2;
+        }
+
+        /* Focus outline for keyboard accessibility */
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 3px;
+        }
+
+        /* Top Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(7, 9, 8, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 14px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .brand-icon-wrapper {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, rgba(163, 230, 53, 0.18), rgba(163, 230, 53, 0.04));
+            border: 1px solid var(--border-medium);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 16px rgba(163, 230, 53, 0.15);
+        }
+
+        .brand-icon-wrapper svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--accent);
+        }
+
+        .brand-text h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand-text h1 span.brand-accent {
+            color: var(--accent);
+        }
+
+        .brand-tag {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(16, 24, 20, 0.8);
+            border: 1px solid var(--border-subtle);
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.25s ease;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            transition: background 0.3s ease;
+        }
+
+        .status-dot.online {
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+            animation: pulse-dot 2s infinite ease-in-out;
+        }
+
+        .status-dot.offline {
+            background: var(--danger);
+            box-shadow: 0 0 8px var(--danger);
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.85); }
+        }
+
+        .docs-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card-subtle);
+            transition: all 0.2s ease;
+        }
+
+        .docs-link:hover {
+            color: var(--accent);
+            border-color: var(--border-medium);
+            background: var(--accent-surface);
+        }
+
+        /* Main Container */
+        main {
+            max-width: 1240px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 32px 24px 60px;
+            flex: 1;
+        }
+
+        /* Hero / Overview Section */
+        .hero {
+            margin-bottom: 32px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            background: var(--accent-surface);
+            border: 1px solid var(--border-medium);
+            color: var(--accent-light);
+            margin-bottom: 12px;
+        }
+
+        .hero h2 {
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            color: var(--text-secondary);
+            max-width: 760px;
+            font-size: 1rem;
+            font-weight: 300;
+        }
+
+        /* Model Architecture Cards (Overview) */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .overview-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+
+        .overview-card:hover {
+            border-color: var(--border-medium);
+            transform: translateY(-2px);
+        }
+
+        .overview-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .overview-card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+
+        .overview-card-title svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--accent);
+        }
+
+        .overview-card-pill {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .overview-card p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.45;
+        }
+
+        .overview-card-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: auto;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-subtle);
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .overview-card-meta span {
+            background: rgba(0, 0, 0, 0.35);
+            padding: 3px 8px;
+            border-radius: var(--radius-sm);
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            background: rgba(14, 19, 16, 0.6);
+            padding: 6px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-subtle);
+            margin: 28px 0 24px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            flex: 1;
+            min-width: 200px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid transparent;
+            border-radius: var(--radius-md);
+            font-family: var(--font-main);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            transition: stroke 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .tab-btn.active {
+            color: #070908;
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 4px 14px rgba(163, 230, 53, 0.3);
+        }
+
+        .tab-btn.active svg {
+            stroke: #070908;
+        }
+
+        /* Workspace Panels */
+        .workspace-panel {
+            display: none;
+            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .workspace-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Workflows Grid Layout */
+        .workflow-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 960px) {
+            .workflow-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Interactive Panels */
+        .glass-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 28px;
+            box-shadow: var(--shadow-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            position: relative;
+        }
+
+        .panel-header {
+            margin-bottom: 22px;
+        }
+
+        .panel-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.01em;
+            margin-bottom: 4px;
+        }
+
+        .panel-desc {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+        }
+
+        /* Upload Dropzone */
+        .dropzone {
+            border: 2px dashed rgba(163, 230, 53, 0.25);
+            border-radius: var(--radius-lg);
+            background: rgba(10, 14, 12, 0.5);
+            padding: 36px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            outline: none;
+        }
+
+        .dropzone:hover, .dropzone.dragover {
+            border-color: var(--accent);
+            background: rgba(163, 230, 53, 0.05);
+            box-shadow: 0 0 20px rgba(163, 230, 53, 0.12);
+        }
+
+        .dropzone-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 14px;
+            border-radius: 50%;
+            background: rgba(163, 230, 53, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dropzone-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--accent);
+        }
+
+        .dropzone h4 {
+            font-size: 0.98rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .dropzone p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        .dropzone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Quick Samples Strip */
+        .samples-strip {
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .samples-label {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .sample-pill-btn {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 5px 10px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sample-pill-btn:hover {
+            color: var(--accent);
+            border-color: var(--border-medium);
+            background: var(--accent-surface);
+        }
+
+        /* Image Preview Box */
+        .preview-container {
+            margin-top: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .preview-container.has-image {
+            display: flex;
+        }
+
+        .preview-card {
+            position: relative;
+            background: #000;
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 220px;
+            max-height: 320px;
+        }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 320px;
+            object-fit: contain;
+            display: block;
+            transition: opacity 0.25s ease;
+        }
+
+        /* Scanning overlay effect */
+        .scan-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            display: none;
+        }
+
+        .scan-overlay.scanning {
+            display: block;
+        }
+
+        .scan-line {
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            box-shadow: 0 0 12px var(--accent);
+            animation: scanAnim 1.4s infinite ease-in-out;
+        }
+
+        @keyframes scanAnim {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(280px); }
+            100% { transform: translateY(0); }
+        }
+
+        .preview-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            padding: 0 4px;
+        }
+
+        .preview-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 13px 22px;
+            background: var(--accent);
+            color: #070908;
+            font-family: var(--font-main);
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(163, 230, 53, 0.28);
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--accent-light);
+            box-shadow: 0 6px 20px rgba(163, 230, 53, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 13px 18px;
+            background: var(--bg-card-subtle);
+            color: var(--text-secondary);
+            font-family: var(--font-main);
+            font-weight: 500;
+            font-size: 0.92rem;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            color: var(--text-primary);
+            border-color: var(--border-medium);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Form Inputs */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .form-label span.unit {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 11px 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
+            cursor: pointer;
+        }
+
+        input:hover, select:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(163, 230, 53, 0.18);
+            outline: none;
+        }
+
+        .input-hint {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        /* Results Display Card */
+        .result-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .result-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 280px;
+            text-align: center;
+            color: var(--text-muted);
+            padding: 32px;
+            border: 1px dashed var(--border-subtle);
+            border-radius: var(--radius-lg);
+            background: rgba(10, 14, 12, 0.3);
+        }
+
+        .result-empty svg {
+            width: 44px;
+            height: 44px;
+            stroke: var(--text-muted);
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .result-empty h4 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .result-empty p {
+            font-size: 0.82rem;
+            max-width: 280px;
+        }
+
+        /* Active Result Card */
+        .result-active {
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .result-active.visible {
+            display: flex;
+        }
+
+        .verdict-banner {
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border: 1px solid transparent;
+            box-shadow: var(--shadow-card);
+        }
+
+        .verdict-banner.state-normal,
+        .verdict-banner.state-nofailure {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.16), rgba(34, 197, 94, 0.04));
+            border-color: var(--success-border);
+        }
+
+        .verdict-banner.state-defective,
+        .verdict-banner.state-failure {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(239, 68, 68, 0.05));
+            border-color: var(--danger-border);
+        }
+
+        .verdict-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .verdict-banner.state-normal .verdict-icon,
+        .verdict-banner.state-nofailure .verdict-icon {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--success);
+        }
+
+        .verdict-banner.state-defective .verdict-icon,
+        .verdict-banner.state-failure .verdict-icon {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .verdict-icon svg {
+            width: 26px;
+            height: 26px;
+            stroke: currentColor;
+        }
+
+        .verdict-details {
+            flex: 1;
+        }
+
+        .verdict-tag {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .verdict-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+            margin-top: 2px;
+        }
+
+        .verdict-banner.state-normal .verdict-title,
+        .verdict-banner.state-nofailure .verdict-title {
+            color: #4ade80;
+        }
+
+        .verdict-banner.state-defective .verdict-title,
+        .verdict-banner.state-failure .verdict-title {
+            color: #f87171;
+        }
+
+        /* Metric Breakdown Card */
+        .metric-card {
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+        }
+
+        .metric-value-large {
+            font-family: var(--font-mono);
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Visual Threshold / Gauge Bar */
+        .gauge-track {
+            height: 10px;
+            background: #000;
+            border-radius: 9999px;
+            position: relative;
+            border: 1px solid var(--border-subtle);
+            margin: 12px 0 6px;
+        }
+
+        .gauge-indicator {
+            position: absolute;
+            top: -5px;
+            width: 4px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--accent);
+            transform: translateX(-50%);
+            transition: left 0.4s ease;
+        }
+
+        .gauge-threshold-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .gauge-labels {
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--text-muted);
+        }
+
+        /* Notes & Disclaimers */
+        .disclaimer-box {
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 3px solid var(--accent);
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.45;
+        }
+
+        .disclaimer-box strong {
+            color: var(--text-primary);
+        }
+
+        /* Error Banner */
+        .alert-banner {
+            display: none;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            background: var(--danger-bg);
+            border: 1px solid var(--danger-border);
+            color: #fca5a5;
+            font-size: 0.85rem;
+            margin-top: 16px;
+        }
+
+        .alert-banner.visible {
+            display: flex;
+        }
+
+        .alert-banner svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--danger);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0, 0, 0, 0.3);
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Technical Specifications Grid */
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .spec-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+        }
+
+        .spec-box h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-light);
+        }
+
+        .spec-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .spec-list li {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.82rem;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .spec-list li span.k {
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .spec-list li span.v {
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            font-weight: 500;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-subtle);
+            background: rgba(7, 9, 8, 0.95);
+            padding: 24px 5%;
+            font-family: var(--font-mono);
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .footer-tech {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .footer-tech span {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="header-brand">
+            <div class="brand-icon-wrapper" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <polyline points="9 12 11 14 15 10"></polyline>
+                </svg>
+            </div>
+            <div class="brand-text">
+                <h1>Predict<span class="brand-accent">Guard</span> AI</h1>
+                <div class="brand-tag">Industrial Predictive Maintenance Command Center</div>
+            </div>
+        </div>
+
+        <div class="header-status">
+            <div class="status-pill" id="apiStatusPill" title="Real-time API connection state">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">CHECKING API...</span>
+            </div>
+            <a href="/docs" target="_blank" rel="noopener noreferrer" class="docs-link" title="Open FastAPI Swagger Interactive Docs">
+                <span>FastAPI /docs</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main>
+
+        <!-- Hero Section -->
+        <section class="hero" aria-labelledby="hero-title">
+            <div class="hero-badge">AI Predictive Maintenance Telemetry · v1.0.0</div>
+            <h2 id="hero-title">Predictive Reliability & Defect Diagnostics</h2>
+            <p>
+                Dual-model intelligence platform uniting convolutional computer vision for front-face casting defect inspection with multi-parameter decision tree telemetry forecasting.
+            </p>
+
+            <!-- Architecture Capability Cards -->
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <div class="overview-card-header">
+                        <div class="overview-card-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                            <span>Casting Surface Inspection</span>
+                        </div>
+                        <span class="overview-card-pill">Computer Vision</span>
+                    </div>
+                    <p>Classifies industrial casting images into Normal or Defective parts via high-resolution deep convolutional representation.</p>
+                    <div class="overview-card-meta">
+                        <span>TensorFlow / Keras H5</span>
+                        <span>Input: 224×224 RGB</span>
+                        <span>Binary Sigmoid</span>
+                    </div>
+                </div>
+
+                <div class="overview-card">
+                    <div class="overview-card-header">
+                        <div class="overview-card-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                            <span>Machine Failure Forecasting</span>
+                        </div>
+                        <span class="overview-card-pill">Sensor Telemetry</span>
+                    </div>
+                    <p>Evaluates multi-sensor equipment operational variables using an automated StandardScaler & ColumnTransformer pipeline.</p>
+                    <div class="overview-card-meta">
+                        <span>Scikit-Learn Pipeline</span>
+                        <span>6 Features (L/M/H + Telemetry)</span>
+                        <span>Decision Tree</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs" role="tablist" aria-label="Prediction Workflows">
+            <button class="tab-btn active" id="tabImage" role="tab" aria-selected="true" aria-controls="panelImage" onclick="switchWorkflow('image')">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+                <span>Casting Defect Detection</span>
+            </button>
+            <button class="tab-btn" id="tabSensor" role="tab" aria-selected="false" aria-controls="panelSensor" onclick="switchWorkflow('sensor')">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                <span>Machine Failure Prediction</span>
+            </button>
+            <button class="tab-btn" id="tabSpecs" role="tab" aria-selected="false" aria-controls="panelSpecs" onclick="switchWorkflow('specs')">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <span>System Architecture</span>
+            </button>
+        </nav>
+
+        <!-- WORKFLOW 1: CASTING INSPECTION -->
+        <section id="panelImage" class="workspace-panel active" role="tabpanel" aria-labelledby="tabImage">
+            <div class="workflow-layout">
+                
+                <!-- Input Panel -->
+                <div class="glass-panel">
+                    <div class="panel-header">
+                        <h3 class="panel-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            <span>Casting Image Ingestion</span>
+                        </h3>
+                        <p class="panel-desc">Upload a casting front-surface image (JPG or PNG) for neural classification.</p>
+                    </div>
+
+                    <form id="imageForm">
+                        <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Drop casting image here or browse">
+                            <div class="dropzone-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                            </div>
+                            <h4>Drag & Drop casting photo here</h4>
+                            <p>or click to browse local files (JPG, JPEG, PNG)</p>
+                            <input type="file" id="imageInput" accept=".jpg,.jpeg,.png,image/jpeg,image/png" aria-label="Select casting file">
+                        </div>
+
+                        <!-- Quick Test Presets -->
+                        <div class="samples-strip">
+                            <span class="samples-label">Quick Test Samples:</span>
+                            <button type="button" class="sample-pill-btn" onclick="loadSampleImage('defective')">
+                                ⚠ Defective Sample
+                            </button>
+                            <button type="button" class="sample-pill-btn" onclick="loadSampleImage('normal')">
+                                ✓ Normal Sample
+                            </button>
+                        </div>
+
+                        <!-- Image Preview -->
+                        <div class="preview-container" id="previewContainer">
+                            <div class="preview-card">
+                                <img id="previewImage" class="preview-img" alt="Casting sample preview">
+                                <div class="scan-overlay" id="scanOverlay">
+                                    <div class="scan-line"></div>
+                                </div>
+                            </div>
+                            <div class="preview-meta">
+                                <span id="previewName">filename.jpg</span>
+                                <span id="previewSize">0 KB</span>
+                            </div>
+                            <div class="preview-actions">
+                                <button type="submit" class="btn-primary" id="btnAnalyzeImage">
+                                    <span id="btnImageText">Analyze Casting</span>
+                                    <span id="btnImageSpinner" class="spinner" style="display: none;"></span>
+                                </button>
+                                <button type="button" class="btn-secondary" onclick="resetImageForm()">
+                                    Change Image
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Error Banner -->
+                        <div class="alert-banner" id="imageErrorBanner" role="alert">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            <div id="imageErrorMessage">An error occurred.</div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Result Panel -->
+                <div class="glass-panel result-panel">
+                    <div class="panel-header">
+                        <h3 class="panel-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            <span>Inspection Diagnostics</span>
+                        </h3>
+                        <p class="panel-desc">Model inference results and raw output evaluation.</p>
+                    </div>
+
+                    <!-- Placeholder State -->
+                    <div class="result-empty" id="imageResultEmpty">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                        <h4>Awaiting Image Submission</h4>
+                        <p>Upload or select a sample casting image to generate deep learning diagnostics.</p>
+                    </div>
+
+                    <!-- Populated Result State -->
+                    <div class="result-active" id="imageResultActive">
+                        <div class="verdict-banner" id="imageVerdictBanner">
+                            <div class="verdict-icon" id="imageVerdictIcon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                            <div class="verdict-details">
+                                <div class="verdict-tag" id="imageVerdictTag">Classification Verdict</div>
+                                <div class="verdict-title" id="imageVerdictTitle">NORMAL CASTING</div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span>RAW MODEL OUTPUT</span>
+                                <span id="imageRawScoreCode">def_front = 0 | ok_front = 1</span>
+                            </div>
+                            <div class="metric-value-large" id="imageRawScore">0.9992</div>
+
+                            <!-- Visual Threshold Range -->
+                            <div class="gauge-track">
+                                <div class="gauge-threshold-line" title="Decision Threshold at 0.50"></div>
+                                <div class="gauge-indicator" id="imageScoreGauge" style="left: 99%;"></div>
+                            </div>
+                            <div class="gauge-labels">
+                                <span>0.0 (Defect)</span>
+                                <span>Threshold: 0.50</span>
+                                <span>1.0 (Normal)</span>
+                            </div>
+                        </div>
+
+                        <div class="disclaimer-box">
+                            <strong>Model Output Attribution:</strong>
+                            <p id="imageNote">
+                                Score is the model output; verify its calibration before treating it as a probability.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- WORKFLOW 2: SENSOR PREDICTION -->
+        <section id="panelSensor" class="workspace-panel" role="tabpanel" aria-labelledby="tabSensor">
+            <div class="workflow-layout">
+
+                <!-- Form Panel -->
+                <div class="glass-panel">
+                    <div class="panel-header">
+                        <h3 class="panel-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                            <span>Machine Sensor Telemetry</span>
+                        </h3>
+                        <p class="panel-desc">Input 6 machine operational measurements for decision tree pipeline inference.</p>
+                    </div>
+
+                    <!-- Presets -->
+                    <div class="samples-strip" style="margin-top: -6px; margin-bottom: 18px;">
+                        <span class="samples-label">Telemetry Presets:</span>
+                        <button type="button" class="sample-pill-btn" onclick="loadSensorPreset('normal')">
+                            ✓ Standard Operation (Normal)
+                        </button>
+                        <button type="button" class="sample-pill-btn" onclick="loadSensorPreset('failure')">
+                            ⚠ High-Stress (Failure Trigger)
+                        </button>
+                        <button type="button" class="sample-pill-btn" onclick="loadSensorPreset('reset')">
+                            ↺ Reset
+                        </button>
+                    </div>
+
+                    <form id="sensorForm">
+                        <div class="form-grid">
+                            
+                            <!-- Type -->
+                            <div class="form-group full-width">
+                                <label for="sensorType" class="form-label">
+                                    <span>Product Quality Variant</span>
+                                    <span class="unit">Type: L / M / H</span>
+                                </label>
+                                <select id="sensorType" required>
+                                    <option value="L">L — Low Variant (50% market distribution)</option>
+                                    <option value="M" selected>M — Medium Variant (30% market distribution)</option>
+                                    <option value="H">H — High Variant (20% market distribution)</option>
+                                </select>
+                            </div>
+
+                            <!-- Air Temperature -->
+                            <div class="form-group">
+                                <label for="sensorAir" class="form-label">
+                                    <span>Air Temperature</span>
+                                    <span class="unit">[K]</span>
+                                </label>
+                                <input type="number" id="sensorAir" step="any" value="300.0" required>
+                                <span class="input-hint">Ambient temperature (~295 to 305 K)</span>
+                            </div>
+
+                            <!-- Process Temperature -->
+                            <div class="form-group">
+                                <label for="sensorProcess" class="form-label">
+                                    <span>Process Temperature</span>
+                                    <span class="unit">[K]</span>
+                                </label>
+                                <input type="number" id="sensorProcess" step="any" value="310.0" required>
+                                <span class="input-hint">Operating temperature (~305 to 315 K)</span>
+                            </div>
+
+                            <!-- Rotational Speed -->
+                            <div class="form-group">
+                                <label for="sensorSpeed" class="form-label">
+                                    <span>Rotational Speed</span>
+                                    <span class="unit">[rpm]</span>
+                                </label>
+                                <input type="number" id="sensorSpeed" step="any" value="1500" required>
+                                <span class="input-hint">Spindle velocity (~1200 to 2800 rpm)</span>
+                            </div>
+
+                            <!-- Torque -->
+                            <div class="form-group">
+                                <label for="sensorTorque" class="form-label">
+                                    <span>Drive Torque</span>
+                                    <span class="unit">[Nm]</span>
+                                </label>
+                                <input type="number" id="sensorTorque" step="any" value="40.0" required>
+                                <span class="input-hint">Generated torque (~10 to 70 Nm)</span>
+                            </div>
+
+                            <!-- Tool Wear -->
+                            <div class="form-group full-width">
+                                <label for="sensorWear" class="form-label">
+                                    <span>Tool Wear Contact Duration</span>
+                                    <span class="unit">[min]</span>
+                                </label>
+                                <input type="number" id="sensorWear" step="any" value="100" required>
+                                <span class="input-hint">Cumulative cutting duration (0 to 250 min)</span>
+                            </div>
+
+                        </div>
+
+                        <div style="margin-top: 24px; display: flex; gap: 12px;">
+                            <button type="submit" class="btn-primary" id="btnPredictSensor">
+                                <span id="btnSensorText">Predict Machine State</span>
+                                <span id="btnSensorSpinner" class="spinner" style="display: none;"></span>
+                            </button>
+                            <button type="reset" class="btn-secondary" onclick="loadSensorPreset('reset')">
+                                Reset
+                            </button>
+                        </div>
+
+                        <!-- Error Banner -->
+                        <div class="alert-banner" id="sensorErrorBanner" role="alert">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            <div id="sensorErrorMessage">An error occurred.</div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Result Panel -->
+                <div class="glass-panel result-panel">
+                    <div class="panel-header">
+                        <h3 class="panel-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                            <span>Failure Diagnostics</span>
+                        </h3>
+                        <p class="panel-desc">Scikit-learn Decision Tree pipeline inference result.</p>
+                    </div>
+
+                    <!-- Placeholder State -->
+                    <div class="result-empty" id="sensorResultEmpty">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                        <h4>Awaiting Sensor Telemetry</h4>
+                        <p>Submit machine parameters or click a preset to run failure prediction.</p>
+                    </div>
+
+                    <!-- Active Result State -->
+                    <div class="result-active" id="sensorResultActive">
+                        <div class="verdict-banner" id="sensorVerdictBanner">
+                            <div class="verdict-icon" id="sensorVerdictIcon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                            <div class="verdict-details">
+                                <div class="verdict-tag" id="sensorVerdictTag">Operational Assessment</div>
+                                <div class="verdict-title" id="sensorVerdictTitle">NO FAILURE DETECTED</div>
+                            </div>
+                        </div>
+
+                        <!-- Class Probabilities Breakdown -->
+                        <div class="metric-card" id="sensorProbaCard">
+                            <div class="metric-header">
+                                <span>DECISION TREE LEAF CLASS DISTRIBUTION</span>
+                                <span id="sensorCodeDisplay">Code: 0</span>
+                            </div>
+
+                            <div style="margin-top: 4px; display: flex; flex-direction: column; gap: 10px;">
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.76rem; margin-bottom: 4px;">
+                                        <span>Class 0 (No Failure)</span>
+                                        <span id="sensorProb0">100%</span>
+                                    </div>
+                                    <div style="height: 6px; background: #000; border-radius: 9999px; overflow: hidden;">
+                                        <div id="sensorProbBar0" style="height: 100%; width: 100%; background: var(--success); transition: width 0.3s ease;"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.76rem; margin-bottom: 4px;">
+                                        <span>Class 1 (Failure)</span>
+                                        <span id="sensorProb1">0%</span>
+                                    </div>
+                                    <div style="height: 6px; background: #000; border-radius: 9999px; overflow: hidden;">
+                                        <div id="sensorProbBar1" style="height: 100%; width: 0%; background: var(--danger); transition: width 0.3s ease;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="disclaimer-box">
+                            <strong>Note on Probabilities:</strong>
+                            <p>
+                                Class probabilities are raw training sample proportions at the terminating decision tree leaf. They are uncalibrated empirical frequencies rather than true posterior probabilities.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- WORKFLOW 3: SYSTEM ARCHITECTURE & MODEL SPECS -->
+        <section id="panelSpecs" class="workspace-panel" role="tabpanel" aria-labelledby="tabSpecs">
+            <div class="specs-grid">
+                
+                <div class="spec-box">
+                    <h3>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                        <span>Casting Model Specifications</span>
+                    </h3>
+                    <ul class="spec-list">
+                        <li><span class="k">Model File</span><span class="v">casting_defect_classifier.h5</span></li>
+                        <li><span class="k">Architecture</span><span class="v">Convolutional Neural Network (CNN)</span></li>
+                        <li><span class="k">Framework</span><span class="v">TensorFlow 2.20 / Keras 3</span></li>
+                        <li><span class="k">Input Resolution</span><span class="v">224 × 224 × 3 (RGB)</span></li>
+                        <li><span class="k">Normalization</span><span class="v">Array / 255.0 ([0.0, 1.0])</span></li>
+                        <li><span class="k">Output Activation</span><span class="v">Sigmoid activation (score in [0, 1])</span></li>
+                        <li><span class="k">Threshold</span><span class="v">0.50 (score &ge; 0.50 &rarr; ok_front)</span></li>
+                        <li><span class="k">Class Mapping</span><span class="v">0: def_front, 1: ok_front</span></li>
+                    </ul>
+                </div>
+
+                <div class="spec-box">
+                    <h3>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                        <span>Sensor Pipeline Specifications</span>
+                    </h3>
+                    <ul class="spec-list">
+                        <li><span class="k">Model File</span><span class="v">decision_tree.joblib</span></li>
+                        <li><span class="k">Architecture</span><span class="v">Scikit-Learn Pipeline</span></li>
+                        <li><span class="k">Preprocessor</span><span class="v">ColumnTransformer</span></li>
+                        <li><span class="k">Numerical Transform</span><span class="v">StandardScaler (5 features)</span></li>
+                        <li><span class="k">Categorical Transform</span><span class="v">OneHotEncoder (Type: L, M)</span></li>
+                        <li><span class="k">Classifier</span><span class="v">DecisionTreeClassifier (101 nodes)</span></li>
+                        <li><span class="k">Class 0</span><span class="v">No Failure (Normal state)</span></li>
+                        <li><span class="k">Class 1</span><span class="v">Failure (Maintenance state)</span></li>
+                    </ul>
+                </div>
+
+                <div class="spec-box">
+                    <h3>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                            <line x1="4" y1="22" x2="4" y2="15"></line>
+                        </svg>
+                        <span>FastAPI Service Architecture</span>
+                    </h3>
+                    <ul class="spec-list">
+                        <li><span class="k">Backend Framework</span><span class="v">FastAPI 0.110+</span></li>
+                        <li><span class="k">ASGI Server</span><span class="v">Uvicorn</span></li>
+                        <li><span class="k">GET /</span><span class="v">Dashboard UI (HTML/CSS/JS)</span></li>
+                        <li><span class="k">GET /api/health</span><span class="v">Real-time health verification</span></li>
+                        <li><span class="k">POST /predict/image</span><span class="v">Multipart casting image upload</span></li>
+                        <li><span class="k">POST /predict/sensors</span><span class="v">JSON telemetry payload</span></li>
+                        <li><span class="k">Interactive Docs</span><span class="v">/docs (Swagger), /redoc</span></li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div>
+            PredictGuard AI &middot; Predictive Maintenance Engineering Suite
+        </div>
+        <div class="footer-tech">
+            <span>FastAPI</span>
+            <span>TensorFlow 2.20</span>
+            <span>Scikit-Learn 1.6.1</span>
+            <span>Uvicorn</span>
+            <span>Vanilla JS/CSS</span>
+        </div>
+    </footer>
+
+    <!-- Script Logic -->
+    <script>
+        // --- 1. Tab Switching ---
+        function switchWorkflow(targetId) {
+            const tabs = [
+                { id: 'image', btn: document.getElementById('tabImage'), panel: document.getElementById('panelImage') },
+                { id: 'sensor', btn: document.getElementById('tabSensor'), panel: document.getElementById('panelSensor') },
+                { id: 'specs', btn: document.getElementById('tabSpecs'), panel: document.getElementById('panelSpecs') }
+            ];
+
+            tabs.forEach(t => {
+                const isActive = t.id === targetId;
+                t.btn.classList.toggle('active', isActive);
+                t.btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                t.panel.classList.toggle('active', isActive);
+            });
+        }
+
+        // --- 2. Live API Health Check ---
+        async function checkApiHealth() {
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+            try {
+                const res = await fetch('/api/health');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.status === 'online') {
+                        statusDot.className = 'status-dot online';
+                        statusText.textContent = 'API CONNECTED · v' + (data.version || '1.0');
+                    } else {
+                        statusDot.className = 'status-dot offline';
+                        statusText.textContent = 'API DEGRADED';
+                    }
+                } else {
+                    throw new Error('API response code: ' + res.status);
+                }
+            } catch (err) {
+                statusDot.className = 'status-dot offline';
+                statusText.textContent = 'DISCONNECTED';
+            }
+        }
+        checkApiHealth();
+        setInterval(checkApiHealth, 15000);
+
+        // --- 3. Casting Image Drag & Drop & Upload ---
+        const dropzone = document.getElementById('dropzone');
+        const imageInput = document.getElementById('imageInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        const previewName = document.getElementById('previewName');
+        const previewSize = document.getElementById('previewSize');
+        const scanOverlay = document.getElementById('scanOverlay');
+        const btnAnalyzeImage = document.getElementById('btnAnalyzeImage');
+        const btnImageText = document.getElementById('btnImageText');
+        const btnImageSpinner = document.getElementById('btnImageSpinner');
+        const imageErrorBanner = document.getElementById('imageErrorBanner');
+        const imageErrorMessage = document.getElementById('imageErrorMessage');
+
+        let selectedImageFile = null;
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, e => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzone.classList.add('dragover');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, e => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzone.classList.remove('dragover');
+            });
+        });
+
+        dropzone.addEventListener('drop', e => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files && files.length > 0) {
+                handleSelectedImage(files[0]);
+            }
+        });
+
+        imageInput.addEventListener('change', () => {
+            if (imageInput.files && imageInput.files.length > 0) {
+                handleSelectedImage(imageInput.files[0]);
+            }
+        });
+
+        function handleSelectedImage(file) {
+            hideImageError();
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (!validTypes.includes(file.type) && !file.name.match(/\.(jpg|jpeg|png)$/i)) {
+                showImageError('Please select a valid JPG or PNG image file.');
+                return;
+            }
+
+            if (file.size > 15 * 1024 * 1024) {
+                showImageError('File size exceeds 15 MB limit.');
+                return;
+            }
+
+            selectedImageFile = file;
+            previewName.textContent = file.name;
+            previewSize.textContent = (file.size / 1024).toFixed(1) + ' KB';
+
+            const reader = new FileReader();
+            reader.onload = e => {
+                previewImage.src = e.target.result;
+                previewContainer.classList.add('has-image');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function loadSampleImage(sampleType) {
+            hideImageError();
+            const sampleUrl = sampleType === 'defective'
+                ? '/sample_images/sample_defective.jpeg'
+                : '/sample_images/sample_normal.jpeg';
+
+            try {
+                const res = await fetch(sampleUrl);
+                if (!res.ok) throw new Error('Could not load sample image asset.');
+                const blob = await res.blob();
+                const filename = sampleType === 'defective' ? 'sample_defective.jpeg' : 'sample_normal.jpeg';
+                const file = new File([blob], filename, { type: 'image/jpeg' });
+                handleSelectedImage(file);
+            } catch (err) {
+                showImageError('Sample image could not be loaded: ' + err.message);
+            }
+        }
+
+        function resetImageForm() {
+            selectedImageFile = null;
+            imageInput.value = '';
+            previewContainer.classList.remove('has-image');
+            previewImage.src = '';
+            hideImageError();
+            document.getElementById('imageResultActive').classList.remove('visible');
+            document.getElementById('imageResultEmpty').style.display = 'flex';
+        }
+
+        function showImageError(msg) {
+            imageErrorMessage.textContent = msg;
+            imageErrorBanner.classList.add('visible');
+        }
+
+        function hideImageError() {
+            imageErrorBanner.classList.remove('visible');
+        }
+
+        document.getElementById('imageForm').addEventListener('submit', async e => {
+            e.preventDefault();
+            if (!selectedImageFile) {
+                showImageError('Please select an image first.');
+                return;
+            }
+
+            hideImageError();
+            scanOverlay.classList.add('scanning');
+            btnAnalyzeImage.disabled = true;
+            btnImageText.textContent = 'Running Inference...';
+            btnImageSpinner.style.display = 'inline-block';
+
+            const formData = new FormData();
+            formData.append('file', selectedImageFile);
+
+            try {
+                const response = await fetch('/predict/image', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Inference failed with status ' + response.status);
+                }
+
+                renderImageResult(data);
+            } catch (err) {
+                showImageError(err.message || 'Image prediction request failed.');
+            } finally {
+                scanOverlay.classList.remove('scanning');
+                btnAnalyzeImage.disabled = false;
+                btnImageText.textContent = 'Analyze Casting';
+                btnImageSpinner.style.display = 'none';
+            }
+        });
+
+        function renderImageResult(data) {
+            document.getElementById('imageResultEmpty').style.display = 'none';
+            const activePanel = document.getElementById('imageResultActive');
+            activePanel.classList.add('visible');
+
+            const banner = document.getElementById('imageVerdictBanner');
+            const title = document.getElementById('imageVerdictTitle');
+            const tag = document.getElementById('imageVerdictTag');
+            const icon = document.getElementById('imageVerdictIcon');
+            const rawScore = document.getElementById('imageRawScore');
+            const gauge = document.getElementById('imageScoreGauge');
+            const note = document.getElementById('imageNote');
+
+            const isNormal = data.prediction === 'ok_front';
+
+            banner.className = 'verdict-banner ' + (isNormal ? 'state-normal' : 'state-defective');
+            tag.textContent = 'CNN Prediction: ' + data.prediction;
+            title.textContent = isNormal ? 'NORMAL CASTING (OK FRONT)' : 'DEFECTIVE CASTING (FAULT DETECTED)';
+
+            if (isNormal) {
+                icon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            } else {
+                icon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+            }
+
+            rawScore.textContent = Number(data.score).toFixed(6);
+
+            // Clamp gauge indicator between 2% and 98%
+            const clampedPercent = Math.max(2, Math.min(98, data.score * 100));
+            gauge.style.left = clampedPercent + '%';
+
+            note.textContent = data.note || 'Score is the raw model activation on range [0, 1] with classification threshold at 0.50.';
+        }
+
+        // --- 4. Sensor Failure Prediction ---
+        const sensorType = document.getElementById('sensorType');
+        const sensorAir = document.getElementById('sensorAir');
+        const sensorProcess = document.getElementById('sensorProcess');
+        const sensorSpeed = document.getElementById('sensorSpeed');
+        const sensorTorque = document.getElementById('sensorTorque');
+        const sensorWear = document.getElementById('sensorWear');
+        const btnPredictSensor = document.getElementById('btnPredictSensor');
+        const btnSensorText = document.getElementById('btnSensorText');
+        const btnSensorSpinner = document.getElementById('btnSensorSpinner');
+        const sensorErrorBanner = document.getElementById('sensorErrorBanner');
+        const sensorErrorMessage = document.getElementById('sensorErrorMessage');
+
+        function loadSensorPreset(preset) {
+            hideSensorError();
+            if (preset === 'normal') {
+                sensorType.value = 'M';
+                sensorAir.value = '300.0';
+                sensorProcess.value = '310.0';
+                sensorSpeed.value = '1500';
+                sensorTorque.value = '40.0';
+                sensorWear.value = '100';
+            } else if (preset === 'failure') {
+                sensorType.value = 'L';
+                sensorAir.value = '302.0';
+                sensorProcess.value = '311.0';
+                sensorSpeed.value = '1350';
+                sensorTorque.value = '68.0';
+                sensorWear.value = '215';
+            } else if (preset === 'reset') {
+                sensorType.value = 'M';
+                sensorAir.value = '300.0';
+                sensorProcess.value = '310.0';
+                sensorSpeed.value = '1500';
+                sensorTorque.value = '40.0';
+                sensorWear.value = '100';
+                document.getElementById('sensorResultActive').classList.remove('visible');
+                document.getElementById('sensorResultEmpty').style.display = 'flex';
+            }
+        }
+
+        function showSensorError(msg) {
+            sensorErrorMessage.textContent = msg;
+            sensorErrorBanner.classList.add('visible');
+        }
+
+        function hideSensorError() {
+            sensorErrorBanner.classList.remove('visible');
+        }
+
+        document.getElementById('sensorForm').addEventListener('submit', async e => {
+            e.preventDefault();
+            hideSensorError();
+
+            const payload = {
+                "Type": sensorType.value,
+                "Air temperature [K]": Number(sensorAir.value),
+                "Process temperature [K]": Number(sensorProcess.value),
+                "Rotational speed [rpm]": Number(sensorSpeed.value),
+                "Torque [Nm]": Number(sensorTorque.value),
+                "Tool wear [min]": Number(sensorWear.value)
+            };
+
+            btnPredictSensor.disabled = true;
+            btnSensorText.textContent = 'Evaluating Pipeline...';
+            btnSensorSpinner.style.display = 'inline-block';
+
+            try {
+                const response = await fetch('/predict/sensors', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Sensor prediction failed with status ' + response.status);
+                }
+
+                renderSensorResult(data);
+            } catch (err) {
+                showSensorError(err.message || 'Sensor prediction request failed.');
+            } finally {
+                btnPredictSensor.disabled = false;
+                btnSensorText.textContent = 'Predict Machine State';
+                btnSensorSpinner.style.display = 'none';
+            }
+        });
+
+        function renderSensorResult(data) {
+            document.getElementById('sensorResultEmpty').style.display = 'none';
+            const activePanel = document.getElementById('sensorResultActive');
+            activePanel.classList.add('visible');
+
+            const banner = document.getElementById('sensorVerdictBanner');
+            const title = document.getElementById('sensorVerdictTitle');
+            const tag = document.getElementById('sensorVerdictTag');
+            const icon = document.getElementById('sensorVerdictIcon');
+            const codeDisplay = document.getElementById('sensorCodeDisplay');
+            const prob0 = document.getElementById('sensorProb0');
+            const prob1 = document.getElementById('sensorProb1');
+            const probBar0 = document.getElementById('sensorProbBar0');
+            const probBar1 = document.getElementById('sensorProbBar1');
+
+            const isFailure = data.prediction === 'Failure' || data.prediction_code === 1;
+
+            banner.className = 'verdict-banner ' + (isFailure ? 'state-failure' : 'state-nofailure');
+            tag.textContent = 'Decision Tree Output: Code ' + data.prediction_code;
+            title.textContent = isFailure ? 'MACHINE FAILURE PREDICTED' : 'NO FAILURE DETECTED';
+            codeDisplay.textContent = 'Prediction Code: ' + data.prediction_code;
+
+            if (!isFailure) {
+                icon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            } else {
+                icon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
+            }
+
+            if (data.class_probabilities) {
+                const p0 = (data.class_probabilities['0'] !== undefined ? data.class_probabilities['0'] : (1 - (data.class_probabilities['1'] || 0))) * 100;
+                const p1 = (data.class_probabilities['1'] !== undefined ? data.class_probabilities['1'] : 0) * 100;
+
+                prob0.textContent = p0.toFixed(1) + '%';
+                prob1.textContent = p1.toFixed(1) + '%';
+                probBar0.style.width = p0 + '%';
+                probBar1.style.width = p1 + '%';
+            }
+        }
+    </script>
+</body>
+</html>

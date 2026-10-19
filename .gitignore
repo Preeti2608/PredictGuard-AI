@@ -1,0 +1,46 @@
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Operating System artifacts
+.DS_Store
+Thumbs.db
+__MACOSX/
+*.tmp
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.qodo/
+
+# Datasets and archives (exclude large datasets from git)
+casting_data/
+casting_data.zip
+*.zip
+*.tar.gz
+
+# Retain essential models and sample assets
+!models/
+!models/casting_defect_classifier.h5
+!models/decision_tree.joblib
+!sample_images/
+!sample_images/sample_defective.jpeg
+!sample_images/sample_normal.jpeg
+
+# Logs and test outputs
+*.log
+.coverage
+htmlcov/
+.pytest_cache/
