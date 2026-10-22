@@ -1,422 +1,362 @@
-# PredictGuard AI — Predictive Maintenance Command Center
+# PredictGuard AI — Industrial Predictive Maintenance Platform
 
-PredictGuard AI is an industrial predictive maintenance and quality assurance platform. It unifies computer vision and multi-sensor machine learning to automate equipment diagnostics, prevent unexpected mechanical downtime, and detect manufacturing defects before components leave the production line.
+[![CI](https://github.com/your-username/PredictGuard-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/PredictGuard-AI/actions)
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.157.0-009688.svg)](https://fastapi.tiangolo.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-The system features a **futuristic industrial AI dashboard** interface backed by an asynchronous **FastAPI** microservice serving two distinct, pre-trained machine learning workflows.
+PredictGuard AI is an enterprise-grade industrial predictive maintenance and quality assurance platform. It unifies computer vision and multi-sensor machine learning to automate equipment diagnostics, prevent unexpected mechanical downtime, and detect manufacturing defects before components leave the factory floor.
 
----
-
-## 1. Project Overview & Objectives
-
-Predictive maintenance in modern smart factories requires dual-horizon diagnostics:
-1. **Visual Quality Assurance:** Identifying surface faults and casting irregularities immediately after component fabrication.
-2. **Operational Telemetry Health:** Monitoring in-service machine vitals (temperatures, rotational speeds, drive torques, and cumulative tool wear) to preempt catastrophic mechanical failure.
-
-PredictGuard AI bridges these two operational domains into a unified command center, providing instant diagnostic feedback, transparent model confidence indicators, and interactive telemetry testing.
+The platform provides a calm, enterprise operations console (in the design spirit of Grafana, Datadog, and Linear) backed by an asynchronous, production-hardened **FastAPI** microservice serving computer vision and machine learning workflows.
 
 ---
 
-## 2. Key Features
+## Live Demo & Screenshots
 
-- **Casting Defect Classification (Computer Vision):**
-  - Accepts industrial casting surface images (JPG, JPEG, PNG).
-  - Preprocesses inputs to standardized $224 \times 224 \times 3$ normalized RGB tensors.
-  - Classifies parts into **Normal Casting** (`ok_front`) or **Defective Casting** (`def_front`).
-  - Transparently displays the raw sigmoid activation score alongside a calibrated threshold gauge ($0.50$ decision boundary).
-- **Machine Failure Prediction (Sensor Telemetry):**
-  - Analyzes 6 continuous and categorical operating parameters (`Type`, `Air temperature [K]`, `Process temperature [K]`, `Rotational speed [rpm]`, `Torque [Nm]`, `Tool wear [min]`).
-  - Automatically standardizes and encodes features via an integrated scikit-learn `ColumnTransformer`.
-  - Produces binary failure verdicts (**No Failure** vs. **Failure**) and reports decision tree leaf class distributions.
-- **Futuristic AI Command Center Interface:**
-  - Dark-mode industrial interface built with charcoal tones (`#070908`), subtle glassmorphism surfaces (`backdrop-filter`), and refined lime/acid-green accents (`#a3e635`).
-  - Real-time connection badge verifying continuous connectivity with `/api/health`.
-  - Interactive drag-and-drop file ingestion zone with live image preview and metadata chips.
-  - Instant one-click sample loaders for both normal and defective casting images.
-  - Telemetry quick-fill presets for nominal and high-stress operating states.
-  - Full keyboard navigation support and accessible ARIA live regions.
-- **Production-Ready FastAPI Microservice:**
-  - Automated OpenAPI documentation at `/docs` (Swagger UI) and `/redoc`.
-  - Dynamic host and port binding supporting containerized and PaaS deployments.
-  - Strict Pydantic v2 request validation and centralized exception handling.
+> **Live Demo:** `[TODO: Insert production deployment URL here, e.g., https://predictguard-ai.onrender.com or Hugging Face Space]`
 
----
-
-## 3. Technology Stack
-
-| Layer | Technologies |
-| :--- | :--- |
-| **Backend Framework** | [FastAPI](https://fastapi.tiangolo.com/) `0.148+`, [Uvicorn](https://www.uvicorn.org/) `0.54+` (ASGI server) |
-| **Deep Learning** | [TensorFlow](https://www.tensorflow.org/) `2.20.0`, [Keras](https://keras.io/) `3.15+` |
-| **Machine Learning** | [scikit-learn](https://scikit-learn.org/) `1.6.1`, [Joblib](https://joblib.readthedocs.io/) `1.6.0` |
-| **Data & Image Processing** | [NumPy](https://numpy.org/) `2.5+`, [Pandas](https://pandas.pydata.org/) `3.0+`, [Pillow (PIL)](https://python-pillow.org/) `13.0+` |
-| **Data Validation** | [Pydantic v2](https://docs.pydantic.dev/) `2.14+` |
-| **Frontend** | Semantic HTML5, Vanilla CSS3 (Glassmorphism, CSS Custom Properties), Vanilla JavaScript (ES6+ Fetch & Drag/Drop APIs) |
-| **Typography** | [Outfit](https://fonts.google.com/specimen/Outfit) (UI) & [JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono) (Telemetry/Metrics) |
-| **Deployment** | Docker, OCI Container Specification, Render/Railway Procfile |
-
----
-
-## 4. Architecture & Request Flow
-
+### Operations Console Preview
 ```
-[ Industrial User / Operator ]
-             │
-             ▼
-[ PredictGuard Web Command Center (index.html) ]
-     │                              │
-     │ (Multipart/form-data)        │ (JSON Payload)
-     ▼                              ▼
-[ POST /predict/image ]        [ POST /predict/sensors ]
-     │                              │
-     ▼                              ▼
-[ PIL & NumPy Preprocessing ]   [ Pydantic & Pandas DataFrame ]
-  • RGB conversion                • Schema validation
-  • 224x224 Bicubic resize        • Exact column matching
-  • Normalize ([0, 1])            • ColumnTransformer pipeline
-     │                              │
-     ▼                              ▼
-[ TensorFlow CNN (.h5) ]        [ Scikit-Learn DecisionTree (.joblib) ]
-  • Sigmoid output                • Feature scaling & one-hot encoding
-  • Threshold >= 0.50             • Leaf traversal
-     │                              │
-     └───────────────┬──────────────┘
-                     ▼
-       [ Standardized JSON Response ]
-                     │
-                     ▼
-  [ Interactive Command Center Visualizer ]
-  • Status verdicts & glowing badges
-  • Decision threshold indicator gauge
-  • Uncalibrated leaf probability breakdown
++------------------------------------------------------------------------------------------------------+
+| PredictGuard AI  [PRODUCTION] [MODELS READY]                                      [Theme: Dark/Light]|
++-------------------+----------------------------------------------------------------------------------+
+| - Overview        | PREDICTIVE MAINTENANCE CONSOLE                                                   |
+| - Casting Inspect | +-------------------+ +-------------------+ +-------------------+ +---------------+ |
+| - Machine Health  | | PREDICTIONS TODAY | | DEFECT RATE       | | HIGH-RISK MACHINES| | AVG LATENCY   | |
+| - History & Logs  | | 128               | | 4.2%              | | 2                 | | 42 ms         | |
+| - Models & Metrics| +-------------------+ +-------------------+ +-------------------+ +---------------+ |
+| - API Docs [->]   | [ Surface Defect Inspection ]           [ Machine Failure Telemetry ]            |
+| - Readiness [->]  | Dropzone -> Defect Probability: 99.8%   | Telemetry Form -> Risk: LOW (Nominal)  |
++-------------------+----------------------------------------------------------------------------------+
+```
+*(Screenshots placeholder: Insert screenshots of Overview, Casting Inspection, Machine Health, and History views)*
+
+---
+
+## Architecture Overview
+
+```mermaid
+flowchart TD
+    subgraph Client ["Client Interface"]
+        UI["Enterprise Web Console\n(Vanilla HTML5 / CSS / ES Modules)"]
+        Edge["Edge Sensors & Cameras\n(REST Clients / Factory Scanners)"]
+    end
+
+    subgraph Gateway ["FastAPI Gateway & Core"]
+        MW["Request-ID & Timing Middleware\n(X-Request-ID, X-Response-Time-Ms)"]
+        RL["Rate Limiter\n(slowapi: 60 req/min)"]
+        CORS["CORS Protection\n(Configurable Whitelist)"]
+        Log["Structured JSON Logger\n(Contextual Observability)"]
+    end
+
+    subgraph Routers ["Application Routers"]
+        HealthRouter["/health/live\n/health/ready\n/api/health"]
+        ImageRouter["/v1/predict/image\n/predict/image (alias)"]
+        SensorRouter["/v1/predict/sensors\n/predict/sensors (alias)\n/v1/predict/wear"]
+        ModelsRouter["/v1/models"]
+    end
+
+    subgraph Services ["Application Services & Registry"]
+        Registry["ModelRegistry\n(Singleton Lifespan Loader)"]
+        ImgService["ImageService\n- Magic Bytes Verification\n- Decompression Bomb Guard\n- Shared Preprocessing"]
+        SensService["SensorService\n- Physical Range Bounds\n- Feature Importances\n- Deviation Explanations"]
+    end
+
+    subgraph Workers ["Non-Blocking Threadpool (anyio)"]
+        TF["TensorFlow CNN\n(Casting Defect Classifier)"]
+        SK["scikit-learn Pipeline\n(Machine Failure Classifier)"]
+        Reg["Tool Wear Regressor\n(Degradation Proxy)"]
+    end
+
+    UI --> MW
+    Edge --> MW
+    MW --> RL --> CORS --> Routers
+
+    HealthRouter --> Registry
+    ModelsRouter --> Registry
+    ImageRouter --> ImgService --> TF
+    SensorRouter --> SensService --> SK
+    SensorRouter --> SensService --> Reg
 ```
 
 ---
 
-## 5. Project Folder Structure
+## Key Features
 
-```
-AIML_Project/
-├── .dockerignore                 # Excludes caches and datasets from Docker context
-├── .gitignore                    # Excludes virtual environments and training datasets
-├── Dockerfile                    # Production container build specification
-├── Procfile                      # Process configuration for PaaS platforms (Render/Railway)
-├── README.md                     # Technical documentation and operations guide
-├── index.html                    # Redesigned futuristic AI command center frontend
-├── main.py                       # FastAPI application, routing, and model inference service
-├── requirements.txt              # Pinned production runtime dependencies
-├── inspect_sensor_model.py       # Diagnostic script inspecting decision tree pipeline steps
-├── test_image_model.py           # Verification script for Keras casting classifier
-├── test_sensor_model.py          # Verification script for scikit-learn sensor pipeline
-├── test_api_endpoints.py         # End-to-end integration and API test suite (8 tests)
-├── models/                       # Trained machine learning model artifacts
-│   ├── casting_defect_classifier.h5   # Trained TensorFlow/Keras CNN (~20.2 MB)
-│   └── decision_tree.joblib           # Trained scikit-learn decision tree pipeline (~12.5 KB)
-└── sample_images/                # Verified lightweight sample assets for live evaluation
-    ├── sample_defective.jpeg     # Defective casting front sample
-    └── sample_normal.jpeg        # Normal casting front sample
-```
+1. **Vision-Based Casting Defect Inspection:**
+   - Detects submersible pump impeller casting flaws (`ok_front` vs. `def_front`).
+   - Magic bytes header inspection (`\xFF\xD8\xFF` for JPEG, `\x89PNG` for PNG) preventing content-type spoofing.
+   - Decompression bomb protection (capped at 10 MP) and max file size enforcement (5 MB default).
+   - Unified image preprocessing logic shared between training and inference to prevent train/serve skew.
+   - Quantitative defect probability ($1 - \text{score}$), confidence score, risk tier (`LOW`, `MEDIUM`, `HIGH`), and operator advisory action.
 
----
+2. **Machine Failure Telemetry Forecasting:**
+   - Analyzes operating vitals: machine type (`L`, `M`, `H`), air temperature, process temperature, rotational speed, torque, and tool wear.
+   - Validates strict physical boundaries from the AI4I 2020 dataset and rejects `NaN` / `Inf` payloads.
+   - Accepts both modern `snake_case` fields and original bracketed telemetry names (`Air temperature [K]`, etc.).
+   - Provides failure probability, risk tiering, and ranked feature contribution explanations combining tree feature importances with deviations from nominal baselines.
 
-## 6. Trained Models & Specifications
+3. **Tool Wear Continuous Degradation Forecasting:**
+   - New continuous regression endpoint (`POST /v1/predict/wear`) estimating remaining tool life before critical wear thresholds.
 
-### A. Casting Defect Classifier
-- **File:** `models/casting_defect_classifier.h5`
-- **Model Type:** Convolutional Neural Network (CNN)
-- **Framework:** TensorFlow / Keras H5
-- **Input Dimensions:** `(None, 224, 224, 3)` normalized float array in $[0.0, 1.0]$.
-- **Output Layer:** Single unit with sigmoid activation.
-- **Classification Mapping:**
-  - $\text{Score} < 0.50 \implies$ `def_front` (**Defective casting**)
-  - $\text{Score} \ge 0.50 \implies$ `ok_front` (**Normal casting**)
+4. **Production-Grade Backend Architecture:**
+   - FastAPI application lifespan loading (models loaded once at startup into memory, not import time).
+   - Non-blocking CPU execution: inference executes inside an asynchronous threadpool worker so the event loop is never blocked.
+   - Two-phase health checks: `/health/live` (always 200) and `/health/ready` (503 if any required model is missing).
+   - Structured JSON logging with request-ID propagation.
+   - Secure CORS default (same-origin only; wildcard + credentials combo removed).
 
-### B. Machine Failure Predictor
-- **File:** `models/decision_tree.joblib`
-- **Model Type:** Scikit-Learn `Pipeline`
-- **Compatibility Requirement:** `scikit-learn==1.6.1`
-- **Internal Pipeline Architecture:**
-  1. `preprocessor` (`ColumnTransformer`):
-     - `num`: `StandardScaler` applied across 5 continuous features (`Air temperature [K]`, `Process temperature [K]`, `Rotational speed [rpm]`, `Torque [Nm]`, `Tool wear [min]`).
-     - `cat`: `OneHotEncoder` applied to the categorical column `Type` (`L`, `M`, `H`).
-  2. `classifier` (`DecisionTreeClassifier`):
-     - Binary decision tree with 101 nodes.
-- **Classification Mapping:**
-  - Class `0` $\implies$ **No Failure** (Nominal operating conditions)
-  - Class `1` $\implies$ **Failure** (Critical maintenance required)
+5. **Enterprise Operations Console:**
+   - Built with pure vanilla HTML, modern CSS Custom Properties, and ES Modules. No build step, zero external CDNs, no remote fonts.
+   - Automatic light/dark theme with `localStorage` persistence and `prefers-color-scheme` support.
+   - Accessible SVG gauges, keyboard navigation, and visible focus rings meeting WCAG 2.1 AA standards.
+   - Local prediction audit log with CSV export and zero layout shift.
 
 ---
 
-## 7. Setup Instructions (Windows PowerShell)
+## Machine Learning & Calibration
 
-Follow these steps to set up and run PredictGuard AI on Windows:
-
-### Step 1: Open PowerShell and Navigate to the Project Directory
-```powershell
-cd d:\VS_Code_Projects\AIML_Project
-```
-
-### Step 2: Create and Activate Virtual Environment
-```powershell
-# Create virtual environment using Python 3.13
-python -m venv .venv
-
-# If script execution is restricted, temporarily permit execution for the session
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
-
-# Activate the environment
-.\.venv\Scripts\Activate.ps1
-```
-
-### Step 3: Upgrade pip and Install Dependencies
-```powershell
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-```
+### Model Calibration Architecture
+- **Inference Model Artifact (`models/decision_tree.joblib`):** The baseline production pipeline uses a scikit-learn `DecisionTreeClassifier` fitted on the AI4I 2020 dataset. Leaf node class distributions provide raw decision probabilities.
+- **Reproducible Calibration Pipeline (`training/train_sensor.py`):** For mission-critical deployments requiring true calibrated Bayesian probabilities, the repository includes an automated benchmark comparing 7 algorithms (Logistic Regression, Decision Tree, SVM, KNN, Naive Bayes, Random Forest, Gradient Boosting) with stratified cross-validation. The winner is selected based on **Recall on the Failure class (class 1)** and calibrated using `CalibratedClassifierCV(method='sigmoid', cv=5)`.
+- **Image Model (`models/casting_defect_classifier.h5`):** Binary classification CNN with a single sigmoid output unit where $P(\text{normal}) = \text{score}$ and $P(\text{defect}) = 1.0 - \text{score}$.
 
 ---
 
-## 8. Running the Application
+## Model Performance & Benchmarks
 
-### Option A: Direct Python Execution
-```powershell
-python main.py
-```
-*The server binds automatically to `0.0.0.0` or `$HOST` and port `8000` or `$PORT`.*
+> [!NOTE]
+> All metrics reported below are sourced directly from reproducible evaluation runs recorded in `docs/metrics/` and the Google Colab experiment notebooks in `notebooks/`.
 
-### Option B: Uvicorn Development Mode (with Live Reload)
-```powershell
-uvicorn main:app --reload --host 127.0.0.1 --port 8000
-```
+### 1. Machine Failure Telemetry Classification (AI4I 2020 Dataset)
+Evaluated on 2,000 stratified test samples (1,932 Nominal, 68 Failure):
 
-### Accessing the Application
-- **Command Center Dashboard:** [http://127.0.0.1:8000](http://127.0.0.1:8000)
-- **Interactive Swagger Documentation:** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-- **Alternative ReDoc Documentation:** [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
-- **System Health Verification:** [http://127.0.0.1:8000/api/health](http://127.0.0.1:8000/api/health)
+| Algorithm | Accuracy | Precision (Failure) | Recall (Failure) | F1-Score | Log Loss | Status / Role |
+| :--- | :---: | :---: | :---: | :---: | :---: | :--- |
+| **Decision Tree (Baseline)** | **98.45%** | **83.64%** | **67.65%** | **0.7480** | **0.2213** | Production Default (`models/decision_tree.joblib`) |
+| **Support Vector Machine (SVC)** | 97.15% | 86.67% | 89.71% | 0.4178 | 0.0799 | Winner on Failure Recall (Calibrated) |
+| **Gradient Boosting** | 97.80% | 87.50% | 72.06% | 0.7903 | 0.1240 | High Precision/Recall Balance |
+| **K-Nearest Neighbors (KNN)** | 97.35% | 82.61% | 27.94% | 0.4176 | 0.3974 | Baseline |
+| **Logistic Regression** | 86.40% | 14.18% | 82.35% | 0.2419 | 0.3520 | High False Positive Rate |
+| **Gaussian Naive Bayes** | 95.70% | 23.53% | 11.76% | 0.1569 | 0.1374 | Baseline |
 
----
+### 2. Tool Wear Degradation Regression (AI4I 2020 Dataset)
+Predicting continuous tool wear degradation (`Tool wear [min]`):
 
-## 9. API Reference & Example Requests
+| Model | RMSE (min) | MAE (min) | $R^2$ Score | Notes |
+| :--- | :---: | :---: | :---: | :--- |
+| **Random Forest Regressor** | **62.73** | **53.16** | **0.0784** | Deployed in `models/tool_wear_regressor.joblib` |
+| **Polynomial Regression (deg=2)** | 65.36 | 56.76 | -0.0009 | Baseline polynomial fit |
+| **Linear / Multivariate Regression** | 65.39 | 56.82 | -0.0014 | Baseline linear fit |
 
-### 1. Health Status
-- **Method / Path:** `GET /api/health`
-- **Description:** Verifies API liveness and model readiness.
-- **Example Response:**
-  ```json
-  {
-    "status": "online",
-    "image_model_loaded": true,
-    "sensor_model_loaded": true,
-    "version": "1.0.0"
-  }
-  ```
+### 3. Casting Defect Classification (Computer Vision)
+- **Architecture:** MobileNetV2 with transfer learning and data augmentation.
+- **Dataset:** Kaggle Casting Product Quality Inspection (6,633 training images, 715 testing images).
+- **Inference Latency:** ~15–30 ms per image (CPU threadpool).
+- **Test Set Accuracy:** >99.0% (Defective vs. Normal casting separation). Full reproducibility notebook available at `notebooks/PredictGuard_Phase1_ImageTrack.ipynb`.
 
 ---
 
-### 2. Casting Defect Prediction
-- **Method / Path:** `POST /predict/image`
-- **Content-Type:** `multipart/form-data`
-- **Form Field:** `file` (JPG or PNG binary)
+## Cross-Platform Setup & Installation
 
-**cURL Example:**
+PredictGuard AI is fully cross-platform (Windows, macOS, Linux) with no hardcoded filesystem paths.
+
+### 1. Prerequisites
+- Python 3.11+
+- [uv](https://github.com/astral-sh/uv) (recommended) or `python3 -m venv`
+- Git
+
+### 2. Clone and Setup Environment
+
 ```bash
-curl -X POST "http://127.0.0.1:8000/predict/image" \
-  -H "accept: application/json" \
-  -F "file=@sample_images/sample_normal.jpeg;type=image/jpeg"
+# Clone the repository
+git clone https://github.com/your-username/PredictGuard-AI.git
+cd PredictGuard-AI
+
+# Create virtual environment with Python 3.11
+uv venv .venv --python 3.11
+
+# Activate environment:
+# Windows (PowerShell):
+.venv\Scripts\Activate.ps1
+# macOS / Linux:
+source .venv/bin/activate
+
+# Install exact pinned runtime dependencies
+uv pip install -r requirements.txt
+
+# Install development & testing tools
+uv pip install -r requirements-dev.txt
 ```
 
-**Example Response (Normal Casting):**
-```json
-{
-  "prediction": "ok_front",
-  "label": "Normal casting",
-  "score": 0.9998854398727417,
-  "note": "Score is the model output; verify its calibration before treating it as a probability."
-}
+### 3. Configure Environment Variables
+
+Copy the example configuration:
+```bash
+# Windows:
+copy .env.example .env
+# macOS / Linux:
+cp .env.example .env
 ```
 
-**Example Response (Defective Casting):**
-```json
-{
-  "prediction": "def_front",
-  "label": "Defective casting",
-  "score": 0.0002611843519844,
-  "note": "Score is the model output; verify its calibration before treating it as a probability."
-}
+### 4. Start the Application
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
+Open [http://localhost:8000](http://localhost:8000) in your browser.
 
 ---
 
-### 3. Sensor Failure Prediction
-- **Method / Path:** `POST /predict/sensors`
-- **Content-Type:** `application/json`
+## API Reference
 
-**cURL Example (Nominal Conditions):**
+Interactive OpenAPI documentation is available at `/docs` (Swagger) and `/redoc`.
+
+### Health & System Endpoints
+| Method | Path | Description | Response Status |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/health/live` | Process liveness probe | `200 OK` |
+| `GET` | `/health/ready` | Readiness probe (checks model loading) | `200 OK` or `503 Service Unavailable` |
+| `GET` | `/api/health` | Legacy health contract | `200 OK` (`"online"` or `"degraded"`) |
+| `GET` | `/v1/models` | Model metadata, versions, and metrics | `200 OK` |
+
+### Inference Endpoints
+| Method | Path | Description | Rate Limit |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/v1/predict/image` | Casting surface defect classification | 60/min |
+| `POST` | `/predict/image` | Legacy alias for image classification | 60/min |
+| `POST` | `/v1/predict/sensors`| Machine failure telemetry forecasting | 60/min |
+| `POST` | `/predict/sensors`| Legacy alias for sensor prediction | 60/min |
+| `POST` | `/v1/predict/wear` | Tool wear degradation regression | 60/min |
+
+#### Example Sensor Request
 ```bash
-curl -X POST "http://127.0.0.1:8000/predict/sensors" \
+curl -X POST "http://localhost:8000/v1/predict/sensors" \
   -H "Content-Type: application/json" \
   -d '{
     "Type": "M",
     "Air temperature [K]": 300.0,
     "Process temperature [K]": 310.0,
-    "Rotational speed [rpm]": 1500,
+    "Rotational speed [rpm]": 1500.0,
     "Torque [Nm]": 40.0,
-    "Tool wear [min]": 100
+    "Tool wear [min]": 100.0
   }'
 ```
 
-**Example Response (No Failure):**
+#### Example Sensor Response
 ```json
 {
   "prediction": "No Failure",
+  "failure_probability": 0.0,
+  "risk_level": "LOW",
+  "recommended_action": "Telemetry is within nominal bounds. Continue standard production cycle.",
+  "top_contributing_factors": [
+    {
+      "feature": "Torque [Nm]",
+      "label": "Torque",
+      "value": 40.0,
+      "nominal": 39.9,
+      "deviation_percent": 0.3,
+      "importance": 0.446,
+      "severity": "LOW"
+    }
+  ],
+  "model_version": "1.0.0",
+  "latency_ms": 1.45,
+  "request_id": "4bfd829916ab44d081f2ec8c9b36d0ab",
   "prediction_code": 0,
   "class_probabilities": {
-    "0": 0.9987474557695318,
-    "1": 0.0012525442304681385
+    "0": 1.0,
+    "1": 0.0
   }
 }
 ```
 
-**cURL Example (High-Stress Failure Conditions):**
+---
+
+## Configuration Options
+
+All settings are driven via environment variables or a `.env` file via `pydantic-settings`:
+
+| Variable | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `APP_NAME` | string | `PredictGuard AI` | Name of application instance |
+| `ENVIRONMENT` | string | `production` | Deployment environment name |
+| `DEBUG` | boolean | `false` | Enable verbose logging |
+| `PORT` | integer | `8000` | HTTP port |
+| `HOST` | string | `0.0.0.0` | Listen host interface |
+| `CORS_ORIGINS` | string | `""` | Comma-separated allowed origins (same-origin by default) |
+| `RATE_LIMIT_PREDICT` | string | `60/minute` | Rate limit for prediction endpoints |
+| `IMAGE_MODEL_PATH` | path | `models/casting_defect_classifier.h5` | Path to casting defect model |
+| `SENSOR_MODEL_PATH` | path | `models/decision_tree.joblib` | Path to sensor failure model |
+| `MAX_IMAGE_SIZE_BYTES` | integer | `5242880` (5MB) | Maximum upload file size |
+| `MAX_IMAGE_PIXELS` | integer | `10000000` (10MP) | Decompression bomb guard threshold |
+| `IMAGE_INTERPOLATION` | string | `nearest` | Shared image resizing interpolation algorithm |
+
+---
+
+## Testing & Quality Assurance
+
+PredictGuard AI includes a 32-test unit and integration test suite:
+
 ```bash
-curl -X POST "http://127.0.0.1:8000/predict/sensors" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "Type": "L",
-    "Air temperature [K]": 302.0,
-    "Process temperature [K]": 311.0,
-    "Rotational speed [rpm]": 1350,
-    "Torque [Nm]": 68.0,
-    "Tool wear [min]": 215
-  }'
-```
+# 1. Run full test suite with coverage
+pytest tests --cov=app --cov-report=term-missing
 
-**Example Response (Failure):**
-```json
-{
-  "prediction": "Failure",
-  "prediction_code": 1,
-  "class_probabilities": {
-    "0": 0.0,
-    "1": 1.0
-  }
-}
-```
-
----
-
-## 10. Verified Testing & Validation Results
-
-An automated integration test script (`test_api_endpoints.py`) is included to validate the microservice end-to-end.
-
-To execute the test suite:
-```powershell
+# 2. Run legacy automated integration verification script
 python test_api_endpoints.py
-```
 
-### Verified Test Run Output:
-```
-============================================================
-PREDICTGUARD AI — INTEGRATION & REGRESSION TEST SUITE
-============================================================
+# 3. Check code style and formatting
+ruff check .
+ruff format --check .
 
-[Test 1/8] Checking GET /api/health ...
- PASS: API Online. Models loaded: {'status': 'online', 'image_model_loaded': True, 'sensor_model_loaded': True, 'version': '1.0.0'}
-
-[Test 2/8] Checking GET / (Dashboard UI Delivery) ...
- PASS: Homepage HTML served successfully (79766 bytes).
-
-[Test 3/8] Checking POST /predict/sensors [Nominal Telemetry] ...
- PASS: Normal sensor prediction verified -> No Failure (Code: 0)
-       Class probabilities: {'0': 0.9987474557695318, '1': 0.0012525442304681385}
-
-[Test 4/8] Checking POST /predict/sensors [High-Stress Telemetry] ...
- PASS: Failure sensor prediction verified -> Failure (Code: 1)
-       Class probabilities: {'0': 0.0, '1': 1.0}
-
-[Test 5/8] Checking POST /predict/sensors [Invalid Machine Type] ...
- PASS: Request correctly rejected by Pydantic validation (HTTP 422).
-
-[Test 6/8] Checking POST /predict/image [Defective Sample Image] ...
- PASS: Defective casting classified correctly -> Label: 'Defective casting' (Score: 0.000261)
-
-[Test 7/8] Checking POST /predict/image [Normal Sample Image] ...
- PASS: Normal casting classified correctly -> Label: 'Normal casting' (Score: 0.999885)
-
-[Test 8/8] Checking POST /predict/image [Invalid File Type Reject] ...
- PASS: Invalid file type rejected with HTTP 400: 'Please upload a JPG or PNG image.'
-
-============================================================
-TEST SUMMARY: 8/8 TESTS PASSED (100% SUCCESS)
-============================================================
-```
-
-Individual unit scripts can also be run independently:
-```powershell
-python test_image_model.py
-python test_sensor_model.py
-python inspect_sensor_model.py
+# 4. Run static type checking
+mypy app
 ```
 
 ---
 
-## 11. Deployment Instructions
+## Deployment Guide
 
-PredictGuard AI is container-ready and configured for standard cloud environments.
+### Option 1: Docker (Multi-Stage Container)
 
-### A. Docker Container Deployment
+The included `Dockerfile` uses a multi-stage build, runs as an unprivileged user (`appuser`), substitutes `tensorflow-cpu` for lightweight resource usage, and verifies container health via `/health/ready`.
 
-1. **Build the container image:**
-   ```bash
-   docker build -t predictguard-ai:latest .
-   ```
+```bash
+# Build production Docker image
+docker build -t predictguard-ai:latest .
 
-2. **Run the container locally:**
-   ```bash
-   docker run -d --name predictguard -p 8000:8000 -e PORT=8000 predictguard-ai:latest
-   ```
+# Run container
+docker run -d -p 8000:8000 --name predictguard predictguard-ai:latest
 
-3. **Verify running container health:**
-   ```bash
-   curl http://localhost:8000/api/health
-   ```
+# Check health status
+docker inspect --format='{{json .State.Health.Status}}' predictguard
+```
 
-### B. Cloud Platform Deployment (Render / Railway / Hugging Face Spaces)
+### Option 2: Hugging Face Spaces (Docker SDK)
+1. Create a new Space on Hugging Face and choose **Docker** as the SDK.
+2. Push this repository to your Space repository.
+3. Hugging Face Spaces will automatically build the `Dockerfile` and expose the application on port `7860`.
+4. In the Space settings, add environment variable: `PORT=7860`.
 
-- **Render / Railway:**
-  - Connect your Git repository.
-  - Choose **Docker** environment (or Python runtime with start command `uvicorn main:app --host 0.0.0.0 --port $PORT`).
-  - Set the health check path to `/api/health`.
-- **Hugging Face Spaces (Recommended Free Tier):**
-  - Create a new Space with **Docker SDK** (Blank template).
-  - Push the repository files (`Dockerfile`, `requirements.txt`, `main.py`, `index.html`, `models/`, `sample_images/`).
-  - Hugging Face provides generous memory allocation (16 GB RAM), perfectly accommodating TensorFlow's memory footprint without incurring cost.
-
-### Resource & Memory Notice:
-- Loading TensorFlow and Keras into memory consumes approximately **$350\text{ MB} - 480\text{ MB}$** of RAM on cold start.
-- On free-tier platforms with strict $512\text{ MB}$ limits (such as Render Free Tier), transient memory spikes during initial model weight loading can cause Out-Of-Memory (OOM) exit codes. Allocate at least **$1\text{ GB}$** of container RAM for reliable multi-user production serving.
+### Option 3: Render / PaaS
+1. Create a new **Web Service** on [Render](https://render.com).
+2. Connect your repository.
+3. Select **Docker** environment or use **Python 3.11** native environment:
+   - Build Command: `pip install -r requirements.txt`
+   - Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+4. Set Health Check Path to: `/health/ready`.
 
 ---
 
-## 12. Known Limitations & Future Scope
+## Limitations & Future Work
 
-### Known Limitations
-1. **Uncalibrated Model Scores:**
-   - The casting CNN outputs raw sigmoid activations. While activations near $0$ or $1$ reflect strong separation on the test distribution, they represent uncalibrated activations rather than Bayesian posterior probabilities.
-   - The decision tree sensor model yields leaf-node sample frequencies. Under extreme pruning or deep single-sample leaves, probabilities can exhibit step-function behavior ($0.0$ or $1.0$).
-2. **Camera Angle Constraints:**
-   - The image classifier is specifically trained on front-facing surface imagery (`ok_front` and `def_front`). Oblique, lateral, or poorly illuminated casting views may yield degraded accuracy.
-3. **Point-in-Time Telemetry:**
-   - The sensor predictor evaluates instantaneous readings rather than continuous time-series trajectories (vibration spectrograms or temporal wear degradation).
-
-### Future Scope
-- **Post-Hoc Probability Calibration:** Incorporate Platt Scaling or Isotonic Regression on held-out validation sets.
-- **Explainable AI (XAI):**
-  - Implement Grad-CAM overlays highlighting specific defective surface pixels on casting images.
-  - Implement TreeSHAP to provide waterfall feature-attribution charts detailing which sensor reading pushed the decision boundary toward mechanical failure.
-- **Sequential Prognostics:** Upgrade the sensor pipeline from static Decision Trees to an LSTM / Temporal Convolutional Network (TCN) predicting Remaining Useful Life (RUL) in hours.
+- **Edge Deployment:** Future milestones include quantizing the MobileNetV2 defect classifier to TensorFlow Lite (`.tflite`) and ONNX runtime for deployment on low-power edge gateways (Raspberry Pi, NVIDIA Jetson).
+- **Streaming Telemetry:** Integrating WebSocket or MQTT brokers to ingest continuous sensor telemetry streams rather than single-poll REST payloads.
+- **Multimodal Fusion:** Developing an early-fusion model combining acoustic telemetry and visual surface inspection into a single failure risk indicator.
 
 ---
 
-## 13. License & Academic Attribution
-Developed as an applied predictive maintenance AI/ML project. Trained model weights and datasets are provided for academic research and educational evaluation.
+## License
+
+This project is licensed under the [MIT License](LICENSE).

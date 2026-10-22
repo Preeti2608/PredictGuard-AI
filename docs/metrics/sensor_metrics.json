@@ -1,0 +1,82 @@
+{
+  "status": "COMPLETED",
+  "dataset": "AI4I 2020 Predictive Maintenance",
+  "primary_metric": "Recall on Machine Failure (Class 1)",
+  "winner": "Support Vector Machine",
+  "calibrated_model_file": "sensor_failure_calibrated.joblib",
+  "calibrated_test_metrics": {
+    "accuracy": 0.9755,
+    "failure_recall": 0.4559,
+    "failure_precision": 0.7209,
+    "failure_f1": 0.5586,
+    "roc_auc": 0.9655,
+    "confusion_matrix": [
+      [
+        1920,
+        12
+      ],
+      [
+        37,
+        31
+      ]
+    ]
+  },
+  "leaderboard": [
+    {
+      "model": "Support Vector Machine",
+      "failure_recall": 0.8971,
+      "failure_precision": 0.2723,
+      "failure_f1": 0.4178,
+      "accuracy": 0.915,
+      "roc_auc": 0.9657
+    },
+    {
+      "model": "Logistic Regression",
+      "failure_recall": 0.8235,
+      "failure_precision": 0.1418,
+      "failure_f1": 0.2419,
+      "accuracy": 0.8245,
+      "roc_auc": 0.9069
+    },
+    {
+      "model": "Gradient Boosting",
+      "failure_recall": 0.7206,
+      "failure_precision": 0.875,
+      "failure_f1": 0.7903,
+      "accuracy": 0.987,
+      "roc_auc": 0.9687
+    },
+    {
+      "model": "Decision Tree",
+      "failure_recall": 0.5,
+      "failure_precision": 0.3505,
+      "failure_f1": 0.4121,
+      "accuracy": 0.9515,
+      "roc_auc": 0.7325
+    },
+    {
+      "model": "Random Forest",
+      "failure_recall": 0.4706,
+      "failure_precision": 0.9143,
+      "failure_f1": 0.6214,
+      "accuracy": 0.9805,
+      "roc_auc": 0.9623
+    },
+    {
+      "model": "K-Nearest Neighbors",
+      "failure_recall": 0.2794,
+      "failure_precision": 0.8261,
+      "failure_f1": 0.4176,
+      "accuracy": 0.9735,
+      "roc_auc": 0.8368
+    },
+    {
+      "model": "Gaussian Naive Bayes",
+      "failure_recall": 0.1176,
+      "failure_precision": 0.2353,
+      "failure_f1": 0.1569,
+      "accuracy": 0.957,
+      "roc_auc": 0.8841
+    }
+  ]
+}

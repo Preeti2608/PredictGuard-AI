@@ -1,0 +1,42 @@
+{
+  "status": "COMPLETED",
+  "dataset": "AI4I 2020 Predictive Maintenance Dataset",
+  "target": "Tool wear [min]",
+  "best_model": "Random Forest Regressor",
+  "best_metrics": {
+    "mse": 3934.7078,
+    "rmse": 62.7272,
+    "mae": 53.1645,
+    "r2_score": 0.0784
+  },
+  "all_models": [
+    {
+      "model": "Random Forest Regressor",
+      "mse": 3934.7078,
+      "rmse": 62.7272,
+      "mae": 53.1645,
+      "r2_score": 0.0784
+    },
+    {
+      "model": "Polynomial Regression (Degree 2)",
+      "mse": 4271.3507,
+      "rmse": 65.3556,
+      "mae": 56.763,
+      "r2_score": -0.0005
+    },
+    {
+      "model": "Multivariate Ridge",
+      "mse": 4275.2496,
+      "rmse": 65.3854,
+      "mae": 56.8205,
+      "r2_score": -0.0014
+    },
+    {
+      "model": "Linear Regression",
+      "mse": 4275.302,
+      "rmse": 65.3858,
+      "mae": 56.8209,
+      "r2_score": -0.0014
+    }
+  ]
+}

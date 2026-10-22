@@ -1,0 +1,11 @@
+{
+  "status": "PENDING_DATASET",
+  "message": "TODO: Provide data/casting_data dataset and execute training/train_image.py",
+  "model": "MobileNetV2 Transfer Learning",
+  "accuracy": null,
+  "precision": null,
+  "recall": null,
+  "f1_score": null,
+  "roc_auc": null,
+  "confusion_matrix": null
+}

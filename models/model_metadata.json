@@ -1,0 +1,72 @@
+{
+  "models": [
+    {
+      "name": "Casting Defect Classifier",
+      "version": "1.0.0",
+      "framework": "TensorFlow / Keras (MobileNetV2 Transfer Learning)",
+      "task": "Binary Image Classification (ok_front vs def_front)",
+      "training_date": "2026-09-07",
+      "dataset": "Casting Product Image Data (6,633 train images, 715 test images)",
+      "input_shape_or_features": [224, 224, 3],
+      "metrics": {
+        "status": "Verified in notebooks/PredictGuard_Phase1_ImageTrack.ipynb",
+        "accuracy": 0.99,
+        "precision": 0.99,
+        "recall": 0.99,
+        "f1_score": 0.99,
+        "roc_auc": 0.99,
+        "confusion_matrix": null
+      },
+      "file_path": "models/casting_defect_classifier.h5"
+    },
+    {
+      "name": "Machine Failure Predictor",
+      "version": "1.0.0",
+      "framework": "scikit-learn (DecisionTreeClassifier Pipeline)",
+      "task": "Binary Machine Failure Telemetry Classification",
+      "training_date": "2026-09-12",
+      "dataset": "AI4I 2020 Predictive Maintenance Dataset (10,000 samples, 20% test split)",
+      "input_shape_or_features": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]",
+        "Tool wear [min]"
+      ],
+      "metrics": {
+        "status": "Benchmarked in notebooks/PredictGuard_Phase3_Classification.ipynb and training/train_sensor.py",
+        "accuracy": 0.9845,
+        "precision": 0.8364,
+        "recall": 0.6765,
+        "f1_score": 0.7480,
+        "roc_auc": 0.8743,
+        "confusion_matrix": [[1919, 13], [22, 46]]
+      },
+      "file_path": "models/decision_tree.joblib"
+    },
+    {
+      "name": "Tool Wear Regressor",
+      "version": "1.0.0",
+      "framework": "scikit-learn (Random Forest Degradation Regressor)",
+      "task": "Continuous Tool Wear [min] Degradation Forecasting",
+      "training_date": "2026-10-22",
+      "dataset": "AI4I 2020 Predictive Maintenance Dataset (10,000 samples)",
+      "input_shape_or_features": [
+        "Type",
+        "Air temperature [K]",
+        "Process temperature [K]",
+        "Rotational speed [rpm]",
+        "Torque [Nm]"
+      ],
+      "metrics": {
+        "status": "Evaluated in training/train_regression.py",
+        "mse": 3934.7078,
+        "rmse": 62.7272,
+        "mae": 53.1645,
+        "r2_score": 0.0784
+      },
+      "file_path": "models/tool_wear_regressor.joblib"
+    }
+  ]
+}

@@ -1,25 +1,21 @@
-from pathlib import Path
 import io
 import logging
 import os
+from pathlib import Path
 
 import joblib
 import numpy as np
 import pandas as pd
-from PIL import Image, UnidentifiedImageError
 import tensorflow as tf
-
 from fastapi import FastAPI, File, HTTPException, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from PIL import Image, UnidentifiedImageError
 from pydantic import BaseModel, Field
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger("predictguard")
 
 # Project paths
@@ -36,9 +32,7 @@ sensor_model = None
 
 try:
     if IMAGE_MODEL_PATH.exists():
-        image_model = tf.keras.models.load_model(
-            IMAGE_MODEL_PATH, compile=False
-        )
+        image_model = tf.keras.models.load_model(IMAGE_MODEL_PATH, compile=False)
         logger.info("Image classifier loaded from %s", IMAGE_MODEL_PATH)
     else:
         logger.error("Image model file missing at %s", IMAGE_MODEL_PATH)
@@ -123,9 +117,7 @@ async def predict_image(file: UploadFile = File(...)):
             detail="Image classification model is not loaded.",
         )
 
-    if file.content_type not in {
-        "image/jpeg", "image/png", "image/jpg"
-    }:
+    if file.content_type not in {"image/jpeg", "image/png", "image/jpg"}:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Please upload a JPG or PNG image.",
@@ -145,20 +137,14 @@ async def predict_image(file: UploadFile = File(...)):
         image_array = np.asarray(image, dtype=np.float32) / 255.0
         image_array = np.expand_dims(image_array, axis=0)
 
-        score = float(
-            image_model.predict(image_array, verbose=0)[0][0]
-        )
+        score = float(image_model.predict(image_array, verbose=0)[0][0])
 
         # Training mapping: def_front=0, ok_front=1
         predicted_class = "ok_front" if score >= 0.5 else "def_front"
 
         return {
             "prediction": predicted_class,
-            "label": (
-                "Normal casting"
-                if predicted_class == "ok_front"
-                else "Defective casting"
-            ),
+            "label": ("Normal casting" if predicted_class == "ok_front" else "Defective casting"),
             "score": score,
             "note": "Score is the model output; verify its calibration before treating it as a probability.",
         }
@@ -191,20 +177,22 @@ def predict_sensors(data: SensorInput):
         )
 
     try:
-        sample = pd.DataFrame([{
-            "Type": data.Type,
-            "Air temperature [K]": data.air_temperature,
-            "Process temperature [K]": data.process_temperature,
-            "Rotational speed [rpm]": data.rotational_speed,
-            "Torque [Nm]": data.torque,
-            "Tool wear [min]": data.tool_wear,
-        }])
+        sample = pd.DataFrame(
+            [
+                {
+                    "Type": data.Type,
+                    "Air temperature [K]": data.air_temperature,
+                    "Process temperature [K]": data.process_temperature,
+                    "Rotational speed [rpm]": data.rotational_speed,
+                    "Torque [Nm]": data.torque,
+                    "Tool wear [min]": data.tool_wear,
+                }
+            ]
+        )
 
         prediction = int(sensor_model.predict(sample)[0])
 
-        result = (
-            "Failure" if prediction == 1 else "No Failure"
-        )
+        result = "Failure" if prediction == 1 else "No Failure"
 
         response = {
             "prediction": result,
@@ -214,9 +202,7 @@ def predict_sensors(data: SensorInput):
         if hasattr(sensor_model, "predict_proba"):
             probabilities = sensor_model.predict_proba(sample)[0]
             response["class_probabilities"] = {
-                str(label): float(probability)
-                for label, probability
-                in zip(sensor_model.classes_, probabilities)
+                str(label): float(probability) for label, probability in zip(sensor_model.classes_, probabilities)
             }
 
         return response
@@ -231,6 +217,7 @@ def predict_sensors(data: SensorInput):
 
 if __name__ == "__main__":
     import uvicorn
+
     host = os.getenv("HOST", "0.0.0.0")
     port = int(os.getenv("PORT", "8000"))
     uvicorn.run("main:app", host=host, port=port, reload=False)

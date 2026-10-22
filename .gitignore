@@ -44,3 +44,6 @@ casting_data.zip
 .coverage
 htmlcov/
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.env

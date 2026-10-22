@@ -1,0 +1,166 @@
+/* PredictGuard AI - Enterprise Modern Design Tokens (Inspired by GastroLens-AI & Linear) */
+:root {
+  /* System Font Stack - Crisp, Modern, High Readability */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Spacing Scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Typography Scale */
+  --text-xs: 0.75rem;     /* 12px */
+  --text-sm: 0.875rem;    /* 14px */
+  --text-base: 1rem;      /* 16px */
+  --text-lg: 1.125rem;    /* 18px */
+  --text-xl: 1.25rem;     /* 20px */
+  --text-2xl: 1.5rem;     /* 24px */
+  --text-3xl: 2rem;       /* 32px */
+  --text-4xl: 2.75rem;    /* 44px */
+  --text-5xl: 3.5rem;     /* 56px */
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* Border Radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Light Theme (Default clean white aesthetic like GastroLens-AI) */
+  --bg-app: #ffffff;
+  --bg-header: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #ffffff;
+  --bg-surface-subtle: #f8fafc;
+  --bg-hover: #f1f5f9;
+  --bg-active: #e2e8f0;
+
+  --border-subtle: #f1f5f9;
+  --border-default: #e2e8f0;
+  --border-strong: #cbd5e1;
+
+  --text-primary: #090d16;
+  --text-secondary: #475569;
+  --text-tertiary: #94a3b8;
+  --text-inverted: #ffffff;
+
+  /* Signature GastroLens Accent: Emerald Green */
+  --brand-green: #10b981;
+  --brand-green-hover: #059669;
+  --brand-green-subtle: #ecfdf5;
+  --brand-green-border: #a7f3d0;
+
+  /* Button Tokens */
+  --btn-primary-bg: #090d16;
+  --btn-primary-text: #ffffff;
+  --btn-primary-hover: #1e293b;
+
+  /* Semantic Status Tokens */
+  --status-success-bg: #ecfdf5;
+  --status-success-border: #a7f3d0;
+  --status-success-text: #065f46;
+  --status-success-dot: #10b981;
+
+  --status-warning-bg: #fffbeb;
+  --status-warning-border: #fde68a;
+  --status-warning-text: #92400e;
+  --status-warning-dot: #f59e0b;
+
+  --status-danger-bg: #fef2f2;
+  --status-danger-border: #fecaca;
+  --status-danger-text: #991b1b;
+  --status-danger-dot: #ef4444;
+
+  --status-neutral-bg: #f8fafc;
+  --status-neutral-border: #e2e8f0;
+  --status-neutral-text: #64748b;
+
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+
+  --focus-ring: 0 0 0 2px #ffffff, 0 0 0 4px #10b981;
+}
+
+/* Dark Theme Overrides */
+[data-theme="dark"] {
+  --bg-app: #0b0f17;
+  --bg-header: rgba(11, 15, 23, 0.95);
+  --bg-surface: #121824;
+  --bg-surface-elevated: #182234;
+  --bg-surface-subtle: #0e1420;
+  --bg-hover: #1c273c;
+  --bg-active: #283752;
+
+  --border-subtle: #1a2334;
+  --border-default: #243048;
+  --border-strong: #334466;
+
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
+  --text-inverted: #0b0f17;
+
+  --brand-green: #34d399;
+  --brand-green-hover: #10b981;
+  --brand-green-subtle: rgba(16, 185, 129, 0.12);
+  --brand-green-border: rgba(16, 185, 129, 0.3);
+
+  --btn-primary-bg: #f8fafc;
+  --btn-primary-text: #090d16;
+  --btn-primary-hover: #e2e8f0;
+
+  --status-success-bg: rgba(16, 185, 129, 0.12);
+  --status-success-border: rgba(16, 185, 129, 0.3);
+  --status-success-text: #34d399;
+  --status-success-dot: #10b981;
+
+  --status-warning-bg: rgba(245, 158, 11, 0.12);
+  --status-warning-border: rgba(245, 158, 11, 0.3);
+  --status-warning-text: #fbbf24;
+  --status-warning-dot: #f59e0b;
+
+  --status-danger-bg: rgba(239, 68, 68, 0.12);
+  --status-danger-border: rgba(239, 68, 68, 0.3);
+  --status-danger-text: #f87171;
+  --status-danger-dot: #ef4444;
+
+  --status-neutral-bg: #182234;
+  --status-neutral-border: #243048;
+  --status-neutral-text: #94a3b8;
+
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+
+  --focus-ring: 0 0 0 2px #0b0f17, 0 0 0 4px #34d399;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
