@@ -316,7 +316,7 @@ mypy app
 
 ---
 
-## Deployment Guide
+## Deployment Guide:
 
 ### Option 1: Docker (Multi-Stage Container)
 
