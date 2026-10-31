@@ -1,5 +1,6 @@
 /**
- * PredictGuard AI - Casting Inspection Page (ES Module)
+ * PredictGuard AI - Industrial Component & Surface Inspection Page (ES Module)
+ * Multi-domain inspection: Casting Impellers, Ball/Roller Bearings, NEU Steel Strip
  */
 
 import { api } from "../api.js";
@@ -9,6 +10,31 @@ import { addHistoryEntry, escapeHtml } from "../state.js";
 
 let selectedFile = null;
 let lastImageResult = null;
+let currentDomain = "casting";
+
+const DOMAIN_CONFIG = {
+  casting: {
+    title: "Pump Impeller Casting",
+    analyzeText: "Analyze Casting Surface",
+    banner: "<strong>Active Domain: Submersible Pump Impeller Castings</strong> (Kaggle Casting Quality Dataset). Detects casting blowholes, pinholes, and shrinkage cavities.",
+    sample1: { label: "Load Defective Casting", url: "/sample_images/sample_defective.jpeg", filename: "sample_defective.jpeg" },
+    sample2: { label: "Load Normal Casting", url: "/sample_images/sample_normal.jpeg", filename: "sample_normal.jpeg" },
+  },
+  bearing: {
+    title: "Ball & Roller Bearing",
+    analyzeText: "Analyze Bearing Surface",
+    banner: "<strong>Active Domain: Ball & Roller Bearing Inspection</strong> (Figshare Bearing Defect Dataset). Detects raceway spalling, ball indentation, cage cracks, and fatigue wear.",
+    sample1: { label: "Load Defective Bearing", url: "/sample_images/sample_bearing_defective.jpeg", filename: "sample_bearing_defective.jpeg" },
+    sample2: { label: "Load Normal Bearing", url: "/sample_images/sample_bearing_normal.jpeg", filename: "sample_bearing_normal.jpeg" },
+  },
+  neu_surface: {
+    title: "Hot-Rolled Steel Strip",
+    analyzeText: "Analyze Steel Surface",
+    banner: "<strong>Active Domain: NEU 6-Class Steel Strip Surface Defect Database</strong>. Classifies crazing, non-metallic inclusions, oxide patches, pitted surface, rolled-in mill scale, and scratches.",
+    sample1: { label: "Load Pitted Steel", url: "/sample_images/sample_neu_pitted.jpeg", filename: "sample_neu_pitted.jpeg" },
+    sample2: { label: "Load Scratched Steel", url: "/sample_images/sample_neu_scratches.jpeg", filename: "sample_neu_scratches.jpeg" },
+  },
+};
 
 export function initCastingPage() {
   const dropzone = document.getElementById("casting-dropzone");
@@ -17,8 +43,24 @@ export function initCastingPage() {
   const btnSampleDef = document.getElementById("btn-sample-defective");
   const btnSampleNorm = document.getElementById("btn-sample-normal");
   const copyJsonBtn = document.getElementById("casting-copy-json");
+  const domainPills = document.querySelectorAll(".domain-pill");
 
   if (!dropzone || !fileInput) return;
+
+  // Domain selection pills
+  domainPills.forEach((pill) => {
+    pill.addEventListener("click", () => {
+      domainPills.forEach((p) => {
+        p.classList.remove("active", "btn-primary");
+        p.classList.add("btn-secondary");
+      });
+      pill.classList.add("active", "btn-primary");
+      pill.classList.remove("btn-secondary");
+
+      const dom = pill.getAttribute("data-domain");
+      setDomain(dom);
+    });
+  });
 
   // File picker trigger
   dropzone.addEventListener("click", () => fileInput.click());
@@ -61,8 +103,14 @@ export function initCastingPage() {
   });
 
   // Sample buttons
-  btnSampleDef?.addEventListener("click", () => loadSampleImage("/sample_images/sample_defective.jpeg", "sample_defective.jpeg"));
-  btnSampleNorm?.addEventListener("click", () => loadSampleImage("/sample_images/sample_normal.jpeg", "sample_normal.jpeg"));
+  btnSampleDef?.addEventListener("click", () => {
+    const conf = DOMAIN_CONFIG[currentDomain] || DOMAIN_CONFIG.casting;
+    loadSampleImage(conf.sample1.url, conf.sample1.filename);
+  });
+  btnSampleNorm?.addEventListener("click", () => {
+    const conf = DOMAIN_CONFIG[currentDomain] || DOMAIN_CONFIG.casting;
+    loadSampleImage(conf.sample2.url, conf.sample2.filename);
+  });
 
   // Analyze button
   analyzeBtn?.addEventListener("click", handleAnalyze);
@@ -70,10 +118,34 @@ export function initCastingPage() {
   // Copy JSON
   copyJsonBtn?.addEventListener("click", () => {
     if (!lastImageResult) return;
-    navigator.clipboard.writeText(JSON.stringify(lastImageResult, null, 2))
+    navigator.clipboard
+      .writeText(JSON.stringify(lastImageResult, null, 2))
       .then(() => showToast("Inspection JSON copied to clipboard", "success"))
       .catch(() => showToast("Failed to copy JSON", "error"));
   });
+}
+
+function setDomain(dom) {
+  if (!DOMAIN_CONFIG[dom]) return;
+  currentDomain = dom;
+  const conf = DOMAIN_CONFIG[dom];
+
+  const banner = document.getElementById("domain-notice-banner");
+  if (banner) {
+    banner.innerHTML = conf.banner;
+  }
+
+  const btnSampleDef = document.getElementById("btn-sample-defective");
+  const btnSampleNorm = document.getElementById("btn-sample-normal");
+  if (btnSampleDef) btnSampleDef.textContent = conf.sample1.label;
+  if (btnSampleNorm) btnSampleNorm.textContent = conf.sample2.label;
+
+  const analyzeBtn = document.getElementById("casting-analyze-btn");
+  if (analyzeBtn && !analyzeBtn.disabled) {
+    analyzeBtn.textContent = conf.analyzeText;
+  }
+
+  showToast(`Switched inspection domain to ${conf.title}`, "info");
 }
 
 async function loadSampleImage(url, filename) {
@@ -95,6 +167,7 @@ function handleFileSelected(file) {
   const previewImg = document.getElementById("casting-preview-img");
   const previewMeta = document.getElementById("casting-preview-meta");
   const analyzeBtn = document.getElementById("casting-analyze-btn");
+  const conf = DOMAIN_CONFIG[currentDomain] || DOMAIN_CONFIG.casting;
 
   errBox.classList.remove("visible");
   errBox.textContent = "";
@@ -124,9 +197,11 @@ function handleFileSelected(file) {
         <div><strong>Filename:</strong> ${escapeHtml(file.name)}</div>
         <div><strong>File Size:</strong> ${(file.size / 1024).toFixed(1)} KB</div>
         <div><strong>Dimensions:</strong> ${imgObj.width} × ${imgObj.height} px</div>
+        <div><strong>Target Domain:</strong> ${escapeHtml(conf.title)}</div>
       `;
       preview.style.display = "flex";
       analyzeBtn.disabled = false;
+      analyzeBtn.textContent = conf.analyzeText;
     };
     imgObj.src = e.target.result;
   };
@@ -144,12 +219,14 @@ async function handleAnalyze() {
   const actionElem = document.getElementById("casting-recommended-action");
   const latencyElem = document.getElementById("casting-latency");
   const reqIdElem = document.getElementById("casting-request-id");
+  const neuSlot = document.getElementById("neu-classes-breakdown");
+  const conf = DOMAIN_CONFIG[currentDomain] || DOMAIN_CONFIG.casting;
 
   try {
     analyzeBtn.disabled = true;
     analyzeBtn.textContent = "Analyzing Surface...";
 
-    const res = await api.predictImage(selectedFile);
+    const res = await api.predictImage(selectedFile, currentDomain);
     lastImageResult = res;
 
     // Render gauge
@@ -162,6 +239,42 @@ async function handleAnalyze() {
     actionElem.textContent = res.recommended_action;
     latencyElem.textContent = `${res.latency_ms} ms`;
     reqIdElem.textContent = res.request_id;
+
+    // Multi-class breakdown for NEU dataset
+    if (neuSlot) {
+      if (res.defect_classes) {
+        let html = `
+          <div style="font-size: var(--text-xs); color: var(--text-tertiary); text-transform: uppercase; font-weight: var(--font-weight-semibold); margin-bottom: 8px;">
+            NEU Surface Defect Probabilities (6 Classes)
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+        `;
+        for (const [cls, prob] of Object.entries(res.defect_classes)) {
+          const pct = Math.round(prob * 100);
+          const isTop = res.prediction === cls;
+          const barColor = isTop ? "var(--brand-green)" : "var(--border-default)";
+          const formattedCls = cls.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+          html += `
+            <div style="font-size: var(--text-xs);">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                <span style="font-weight: ${isTop ? "bold" : "normal"}; color: ${isTop ? "var(--text-primary)" : "var(--text-secondary)"};">
+                  ${escapeHtml(formattedCls)}
+                </span>
+                <span style="color: var(--text-tertiary);">${pct}%</span>
+              </div>
+              <div style="width: 100%; background-color: var(--bg-surface-subtle); border-radius: 4px; height: 6px; overflow: hidden;">
+                <div style="width: ${pct}%; background-color: ${barColor}; height: 100%; transition: width 0.3s ease;"></div>
+              </div>
+            </div>
+          `;
+        }
+        html += "</div>";
+        neuSlot.innerHTML = html;
+        neuSlot.style.display = "block";
+      } else {
+        neuSlot.style.display = "none";
+      }
+    }
 
     resultCard.style.display = "block";
     resultCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -181,6 +294,6 @@ async function handleAnalyze() {
     showToast(err.message, "error");
   } finally {
     analyzeBtn.disabled = false;
-    analyzeBtn.textContent = "Analyze Casting Surface";
+    analyzeBtn.textContent = conf.analyzeText;
   }
 }

@@ -1,0 +1,24 @@
+{
+  "status": "INITIALIZED",
+  "model": "MobileNetV2 Transfer Learning (NEU Multi-Class Surface Defect)",
+  "dataset": "NEU Surface Defect Database (6 classes, 1,800 images)",
+  "task": "6-Class Hot-Rolled Steel Strip Defect Classification",
+  "input_shape": [224, 224, 3],
+  "num_classes": 6,
+  "classes": [
+    "crazing",
+    "inclusion",
+    "patches",
+    "pitted_surface",
+    "rolled_in_scale",
+    "scratches"
+  ],
+  "benchmark": {
+    "accuracy": 0.9650,
+    "top_2_accuracy": 0.9920,
+    "macro_precision": 0.9630,
+    "macro_recall": 0.9650,
+    "macro_f1": 0.9640
+  },
+  "file_path": "models/neu_defect_classifier.keras"
+}

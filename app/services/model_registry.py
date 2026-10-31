@@ -18,11 +18,15 @@ class ModelRegistry:
 
     def __init__(self) -> None:
         self.image_model: Optional[Any] = None
+        self.bearing_model: Optional[Any] = None
+        self.neu_model: Optional[Any] = None
         self.sensor_model: Optional[Any] = None
         self.wear_regressor: Optional[Any] = None
         self.metadata: Dict[str, Any] = {"models": []}
         self.loaded_status: Dict[str, bool] = {
             "image_model": False,
+            "bearing_model": False,
+            "neu_model": False,
             "sensor_model": False,
             "wear_model": False,
         }
@@ -31,7 +35,7 @@ class ModelRegistry:
         """Load all configured models and metadata synchronously during app startup."""
         logger.info("Initializing ModelRegistry from disk...")
 
-        # 1. Load Image Classifier
+        # 1. Load Image Classifier (Pump Impeller Casting)
         image_path = settings.image_model_path
         if not image_path.is_absolute():
             image_path = settings.base_dir / image_path
@@ -49,6 +53,42 @@ class ModelRegistry:
             logger.warning("Image model file does not exist at %s", image_path)
             self.image_model = None
             self.loaded_status["image_model"] = False
+
+        # 1b. Load Bearing Defect Classifier (optional / on-demand)
+        bearing_path = settings.bearing_model_path
+        if not bearing_path.is_absolute():
+            bearing_path = settings.base_dir / bearing_path
+
+        if bearing_path.exists():
+            try:
+                self.bearing_model = tf.keras.models.load_model(str(bearing_path), compile=False)
+                self.loaded_status["bearing_model"] = True
+                logger.info("Loaded bearing defect classifier from %s", bearing_path)
+            except Exception as exc:
+                logger.warning("Optional bearing classifier failed to load from %s: %s", bearing_path, exc)
+                self.bearing_model = None
+                self.loaded_status["bearing_model"] = False
+        else:
+            self.bearing_model = None
+            self.loaded_status["bearing_model"] = False
+
+        # 1c. Load NEU Surface Defect Classifier (optional / on-demand)
+        neu_path = settings.neu_model_path
+        if not neu_path.is_absolute():
+            neu_path = settings.base_dir / neu_path
+
+        if neu_path.exists():
+            try:
+                self.neu_model = tf.keras.models.load_model(str(neu_path), compile=False)
+                self.loaded_status["neu_model"] = True
+                logger.info("Loaded NEU surface defect classifier from %s", neu_path)
+            except Exception as exc:
+                logger.warning("Optional NEU classifier failed to load from %s: %s", neu_path, exc)
+                self.neu_model = None
+                self.loaded_status["neu_model"] = False
+        else:
+            self.neu_model = None
+            self.loaded_status["neu_model"] = False
 
         # 2. Load Sensor Failure Classifier
         sensor_path = settings.sensor_model_path
@@ -108,8 +148,19 @@ class ModelRegistry:
         """System is ready if both primary production models are loaded and available."""
         return bool(self.image_model is not None and self.sensor_model is not None)
 
-    def get_image_model(self) -> Any:
+    def get_image_model(self, domain: str = "casting") -> Any:
+        dom = str(domain).lower()
+        if dom == "bearing":
+            return self.bearing_model or self.image_model
+        elif dom in ("neu_surface", "neu"):
+            return self.neu_model
         return self.image_model
+
+    def get_bearing_model(self) -> Optional[Any]:
+        return self.bearing_model
+
+    def get_neu_model(self) -> Optional[Any]:
+        return self.neu_model
 
     def get_sensor_model(self) -> Any:
         return self.sensor_model
@@ -126,6 +177,10 @@ class ModelRegistry:
             name = item.get("name", "")
             if "Casting" in name:
                 item["status"] = "loaded" if self.loaded_status["image_model"] else "missing_or_failed"
+            elif "Bearing" in name:
+                item["status"] = "loaded" if self.loaded_status["bearing_model"] else "not_configured"
+            elif "NEU" in name or "Steel" in name:
+                item["status"] = "loaded" if self.loaded_status["neu_model"] else "not_configured"
             elif "Machine Failure" in name:
                 item["status"] = "loaded" if self.loaded_status["sensor_model"] else "missing_or_failed"
             elif "Tool Wear" in name:

@@ -13,9 +13,12 @@ export class ApiClient {
     return { ok: res.ok, status: res.status, data };
   }
 
-  async predictImage(file) {
+  async predictImage(file, domain = "casting") {
     const formData = new FormData();
     formData.append("file", file);
+    if (domain) {
+      formData.append("domain", domain);
+    }
 
     const res = await fetch(`${this.baseUrl}/v1/predict/image`, {
       method: "POST",

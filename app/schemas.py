@@ -11,6 +11,13 @@ class RiskLevel(str, Enum):
     HIGH = "HIGH"
 
 
+class InspectionDomain(str, Enum):
+    CASTING = "casting"
+    BEARING = "bearing"
+    NEU_SURFACE = "neu_surface"
+    MVTEC = "mvtec"
+
+
 class ProductType(str, Enum):
     L = "L"
     M = "M"
@@ -102,15 +109,19 @@ class ToolWearPredictionInput(BaseModel):
 
 
 class ImagePredictionResponse(BaseModel):
-    prediction: str = Field(description="'ok_front' or 'def_front'")
-    label: str = Field(description="'Normal casting' or 'Defective casting'")
-    defect_probability: float = Field(description="Calibrated probability of defect (1 - sigmoid_score)")
+    prediction: str = Field(description="'ok_front' or 'def_front' (or class name for multi-class)")
+    label: str = Field(description="Human readable diagnostic label")
+    defect_probability: float = Field(description="Calibrated probability of defect")
     confidence: float = Field(description="Confidence percentage (0.0 - 1.0)")
     risk_level: RiskLevel = Field(description="Risk assessment category (LOW, MEDIUM, HIGH)")
     recommended_action: str = Field(description="Recommended maintenance or inspection procedure")
     model_version: str = Field(description="Identifier and version of inference model")
     latency_ms: float = Field(description="Inference execution latency in milliseconds")
     request_id: str = Field(description="Traceable unique request identifier")
+    domain: InspectionDomain = Field(default=InspectionDomain.CASTING, description="Selected component inspection domain")
+    defect_classes: Optional[Dict[str, float]] = Field(
+        default=None, description="Per-class probabilities for multi-class domains (e.g. NEU surface)"
+    )
 
     # Backward compatibility fields
     score: float = Field(description="Raw sigmoid output (P(normal))")

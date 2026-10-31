@@ -93,3 +93,36 @@ def test_predict_image_oversize(client):
     files = {"file": ("huge.jpg", oversize_bytes, "image/jpeg")}
     res = client.post("/v1/predict/image", files=files)
     assert res.status_code in [400, 413]
+
+
+def test_predict_image_bearing_domain(client):
+    img_path = SAMPLE_DIR / "sample_bearing_normal.jpeg"
+    assert img_path.exists(), "Sample bearing image missing"
+
+    with open(img_path, "rb") as f:
+        files = {"file": ("sample_bearing_normal.jpeg", f, "image/jpeg")}
+        res = client.post("/v1/predict/image", files=files, data={"domain": "bearing"})
+
+    assert res.status_code == 200
+    data = res.json()
+    assert data["domain"] == "bearing"
+    assert "Bearing" in data["label"]
+    assert "model_version" in data
+    assert "bearing" in data["model_version"]
+
+
+def test_predict_image_neu_surface_domain(client):
+    img_path = SAMPLE_DIR / "sample_neu_pitted.jpeg"
+    assert img_path.exists(), "Sample NEU image missing"
+
+    with open(img_path, "rb") as f:
+        files = {"file": ("sample_neu_pitted.jpeg", f, "image/jpeg")}
+        res = client.post("/v1/predict/image", files=files, data={"domain": "neu_surface"})
+
+    assert res.status_code == 200
+    data = res.json()
+    assert data["domain"] == "neu_surface"
+    assert "defect_classes" in data and data["defect_classes"] is not None
+    assert len(data["defect_classes"]) == 6
+    assert "pitted_surface" in data["defect_classes"]
+    assert "scratches" in data["defect_classes"]
