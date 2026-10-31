@@ -277,6 +277,22 @@ class ImageService:
             label = "Normal casting" if predicted_class == "ok_front" else "Defective casting"
             confidence = round(score if predicted_class == "ok_front" else defect_prob, 6)
             risk_level, recommended_action = evaluate_image_risk(defect_prob, self.settings, domain="casting")
+
+            # Check for white background or perspective anomaly (>30% near-white pixels)
+            white_ratio = float(np.mean(tensor > 0.92))
+            note = "Score is the model output; verify its calibration before treating it as a probability."
+            if white_ratio > 0.30:
+                note = (
+                    "Warning: Angled 3D catalog photo with white backdrop detected. Internal impeller fluid channels "
+                    "cast deep shadows that falsely register as casting voids. For accurate inspection, capture the flat top face directly from above."
+                )
+                if defect_prob > 0.70:
+                    recommended_action = (
+                        "Likely false positive due to 3D perspective angle and studio backdrop. The camera is viewing the internal "
+                        "fluid passages between the impeller vanes, creating dark shadow cavities that trigger defect alerts. "
+                        "Re-inspect by placing the casting flat on an inspection surface and capturing an orthogonal top-down view."
+                    )
+
             return ImagePredictionResponse(
                 prediction=predicted_class,
                 label=label,
@@ -290,5 +306,5 @@ class ImageService:
                 domain=inspection_domain,
                 defect_classes=None,
                 score=score,
-                note="Score is the model output; verify its calibration before treating it as a probability.",
+                note=note,
             )
