@@ -7,7 +7,11 @@ from PIL import Image, UnidentifiedImageError
 from starlette import status
 
 from app.config import Settings
-from app.core.errors import ImageValidationException, ModelNotLoadedException
+from app.core.errors import (
+    ImageValidationException,
+    ModelNotLoadedException,
+    ModelNotTrainedException,
+)
 from app.core.logging import get_logger
 from app.schemas import ImagePredictionResponse, InspectionDomain, RiskLevel
 from app.services.model_registry import ModelRegistry
@@ -199,6 +203,13 @@ class ImageService:
             interpolation=self.settings.image_interpolation,
             max_pixels=self.settings.max_image_pixels,
         )
+
+        # Check if domain model is trained or if placeholders are explicitly enabled for dev
+        if not self.registry.is_domain_trained(dom, allow_placeholders=self.settings.allow_placeholder_models):
+            raise ModelNotTrainedException(
+                dom,
+                f"Inspection domain '{dom}' is an untrained placeholder. Training on verified domain data is required before serving predictions.",
+            )
 
         model = self.registry.get_image_model(domain=dom)
 

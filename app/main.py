@@ -107,6 +107,7 @@ def create_app(custom_settings: Optional[Settings] = None) -> FastAPI:
     app.include_router(image.router)
     app.include_router(sensors.router)
     app.include_router(models.router)
+    app.include_router(models.domains_router)
 
     # Mount static assets
     frontend_dir = settings.base_dir / settings.frontend_dir

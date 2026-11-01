@@ -17,13 +17,16 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8000
 
+    # Development / Placeholder settings
+    allow_placeholder_models: bool = False
+
     # Paths
     base_dir: Path = Path(__file__).resolve().parent.parent
     models_dir: Path = Path("models")
     image_model_path: Path = Path("models/casting_defect_classifier.h5")
     bearing_model_path: Path = Path("models/bearing_defect_classifier.keras")
     neu_model_path: Path = Path("models/neu_defect_classifier.keras")
-    sensor_model_path: Path = Path("models/decision_tree.joblib")
+    sensor_model_path: Path = Path("models/sensor_failure_calibrated.joblib")
     regression_model_path: Path = Path("models/tool_wear_regressor.joblib")
     model_metadata_path: Path = Path("models/model_metadata.json")
     sample_images_dir: Path = Path("sample_images")

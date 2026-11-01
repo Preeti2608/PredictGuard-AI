@@ -22,6 +22,7 @@ def health_live() -> HealthLiveResponse:
 def health_ready(
     response: Response,
     registry: ModelRegistry = Depends(get_model_registry),
+    settings: Settings = Depends(get_settings),
 ) -> HealthReadyResponse:
     """
     Readiness probe for container orchestrators (e.g. Docker HEALTHCHECK, Kubernetes).
@@ -32,12 +33,15 @@ def health_ready(
     if not ready:
         response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
 
+    domain_map = registry.get_domain_readiness_map(allow_placeholders=settings.allow_placeholder_models)
+
     return HealthReadyResponse(
         status="ready" if ready else "not_ready",
         image_model_loaded=registry.loaded_status.get("image_model", False),
         sensor_model_loaded=registry.loaded_status.get("sensor_model", False),
         wear_model_loaded=registry.loaded_status.get("wear_model", False),
         timestamp=datetime.now(timezone.utc).isoformat(),
+        domains=domain_map,
     )
 
 

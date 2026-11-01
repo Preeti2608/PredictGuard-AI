@@ -53,6 +53,14 @@ export class ApiClient {
     }
     return await res.json();
   }
+
+  async getDomains() {
+    const res = await fetch(`${this.baseUrl}/v1/domains`);
+    if (!res.ok) {
+      throw new Error(`Failed to fetch domains (${res.status})`);
+    }
+    return await res.json();
+  }
 }
 
 export const api = new ApiClient();

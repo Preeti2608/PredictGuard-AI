@@ -95,37 +95,32 @@ def test_predict_image_oversize(client):
     assert res.status_code in [400, 413]
 
 
-def test_predict_image_bearing_domain(client):
-    img_path = SAMPLE_DIR / "sample_bearing_normal.jpeg"
-    assert img_path.exists(), "Sample bearing image missing"
+def test_predict_image_bearing_domain_untrained_fails_503(client):
+    img_path = SAMPLE_DIR / "synthetic_bearing_normal.jpeg"
+    assert img_path.exists(), "Synthetic bearing image missing"
 
     with open(img_path, "rb") as f:
-        files = {"file": ("sample_bearing_normal.jpeg", f, "image/jpeg")}
+        files = {"file": ("synthetic_bearing_normal.jpeg", f, "image/jpeg")}
         res = client.post("/v1/predict/image", files=files, data={"domain": "bearing"})
 
-    assert res.status_code == 200
+    assert res.status_code == 503
     data = res.json()
-    assert data["domain"] == "bearing"
-    assert "Bearing" in data["label"]
-    assert "model_version" in data
-    assert "bearing" in data["model_version"]
+    assert data["error_code"] == "MODEL_NOT_TRAINED"
+    assert "untrained placeholder" in data["message"].lower()
 
 
-def test_predict_image_neu_surface_domain(client):
-    img_path = SAMPLE_DIR / "sample_neu_pitted.jpeg"
-    assert img_path.exists(), "Sample NEU image missing"
+def test_predict_image_neu_surface_domain_untrained_fails_503(client):
+    img_path = SAMPLE_DIR / "synthetic_neu_pitted.jpeg"
+    assert img_path.exists(), "Synthetic NEU image missing"
 
     with open(img_path, "rb") as f:
-        files = {"file": ("sample_neu_pitted.jpeg", f, "image/jpeg")}
+        files = {"file": ("synthetic_neu_pitted.jpeg", f, "image/jpeg")}
         res = client.post("/v1/predict/image", files=files, data={"domain": "neu_surface"})
 
-    assert res.status_code == 200
+    assert res.status_code == 503
     data = res.json()
-    assert data["domain"] == "neu_surface"
-    assert "defect_classes" in data and data["defect_classes"] is not None
-    assert len(data["defect_classes"]) == 6
-    assert "pitted_surface" in data["defect_classes"]
-    assert "scratches" in data["defect_classes"]
+    assert data["error_code"] == "MODEL_NOT_TRAINED"
+    assert "untrained placeholder" in data["message"].lower()
 
 
 def test_predict_image_perspective_mismatch_warning(client):

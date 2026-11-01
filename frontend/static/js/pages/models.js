@@ -39,9 +39,13 @@ export async function initModelsPage() {
 
 function renderModelCard(model) {
   const isLoaded = model.status === "loaded";
+  const isTrained = model.trained !== false;
   const statusBadge = isLoaded
     ? `<span class="badge badge-low">LOADED & ACTIVE</span>`
     : `<span class="badge badge-high">${escapeHtml(model.status.toUpperCase())}</span>`;
+  const trainBadge = isTrained
+    ? `<span class="badge badge-low" style="margin-left: 6px;">TRAINED</span>`
+    : `<span class="badge badge-high" style="margin-left: 6px;">NOT TRAINED</span>`;
 
   let featuresContent = "";
   if (Array.isArray(model.input_shape_or_features)) {
@@ -91,7 +95,10 @@ function renderModelCard(model) {
           <div class="card-title">${escapeHtml(model.name)} <span style="font-size: var(--text-xs); color: var(--text-tertiary); font-family: var(--font-mono);">v${escapeHtml(model.version)}</span></div>
           <div class="card-subtitle">${escapeHtml(model.task)}</div>
         </div>
-        ${statusBadge}
+        <div style="display: flex; gap: 6px; align-items: center;">
+          ${statusBadge}
+          ${trainBadge}
+        </div>
       </div>
 
       <div class="grid-2" style="font-size: var(--text-sm); gap: var(--space-4);">

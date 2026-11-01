@@ -49,6 +49,7 @@ COPY --chown=appuser:appuser app/ ./app/
 COPY --chown=appuser:appuser frontend/ ./frontend/
 COPY --chown=appuser:appuser models/ ./models/
 COPY --chown=appuser:appuser sample_images/ ./sample_images/
+COPY --chown=appuser:appuser docs/ ./docs/
 COPY --chown=appuser:appuser index.html ./index.html
 
 # Run as non-root user

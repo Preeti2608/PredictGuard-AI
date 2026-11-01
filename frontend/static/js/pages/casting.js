@@ -15,6 +15,7 @@ let currentDomain = "casting";
 const DOMAIN_CONFIG = {
   casting: {
     title: "Pump Impeller Casting",
+    trained: true,
     analyzeText: "Analyze Casting Surface",
     banner: "<strong>Active Domain: Submersible Pump Impeller Castings</strong> (Kaggle Casting Quality Dataset). Detects casting blowholes, pinholes, and shrinkage cavities.",
     sample1: { label: "Load Defective Casting", url: "/sample_images/sample_defective.jpeg", filename: "sample_defective.jpeg" },
@@ -22,17 +23,19 @@ const DOMAIN_CONFIG = {
   },
   bearing: {
     title: "Ball & Roller Bearing",
-    analyzeText: "Analyze Bearing Surface",
-    banner: "<strong>Active Domain: Ball & Roller Bearing Inspection</strong> (Figshare Bearing Defect Dataset). Detects raceway spalling, ball indentation, cage cracks, and fatigue wear.",
-    sample1: { label: "Load Defective Bearing", url: "/sample_images/sample_bearing_defective.jpeg", filename: "sample_bearing_defective.jpeg" },
-    sample2: { label: "Load Normal Bearing", url: "/sample_images/sample_bearing_normal.jpeg", filename: "sample_bearing_normal.jpeg" },
+    trained: false,
+    analyzeText: "Domain Not Trained",
+    banner: "<strong>Active Domain: Ball & Roller Bearing Inspection</strong> <span class='badge badge-high' style='margin-left: 8px;'>NOT TRAINED</span><br>This domain model is an untrained placeholder. Provide verified bearing dataset to enable production inference.",
+    sample1: { label: "Synthetic Defective (Dev)", url: "/sample_images/synthetic_bearing_defective.jpeg", filename: "synthetic_bearing_defective.jpeg" },
+    sample2: { label: "Synthetic Normal (Dev)", url: "/sample_images/synthetic_bearing_normal.jpeg", filename: "synthetic_bearing_normal.jpeg" },
   },
   neu_surface: {
     title: "Hot-Rolled Steel Strip",
-    analyzeText: "Analyze Steel Surface",
-    banner: "<strong>Active Domain: NEU 6-Class Steel Strip Surface Defect Database</strong>. Classifies crazing, non-metallic inclusions, oxide patches, pitted surface, rolled-in mill scale, and scratches.",
-    sample1: { label: "Load Pitted Steel", url: "/sample_images/sample_neu_pitted.jpeg", filename: "sample_neu_pitted.jpeg" },
-    sample2: { label: "Load Scratched Steel", url: "/sample_images/sample_neu_scratches.jpeg", filename: "sample_neu_scratches.jpeg" },
+    trained: false,
+    analyzeText: "Domain Not Trained",
+    banner: "<strong>Active Domain: NEU 6-Class Steel Strip Surface Defect Database</strong> <span class='badge badge-high' style='margin-left: 8px;'>NOT TRAINED</span><br>This domain model is an untrained placeholder. Provide NEU dataset to train and enable 6-class classification.",
+    sample1: { label: "Synthetic Pitted (Dev)", url: "/sample_images/synthetic_neu_pitted.jpeg", filename: "synthetic_neu_pitted.jpeg" },
+    sample2: { label: "Synthetic Scratched (Dev)", url: "/sample_images/synthetic_neu_scratches.jpeg", filename: "synthetic_neu_scratches.jpeg" },
   },
 };
 
@@ -141,8 +144,14 @@ function setDomain(dom) {
   if (btnSampleNorm) btnSampleNorm.textContent = conf.sample2.label;
 
   const analyzeBtn = document.getElementById("casting-analyze-btn");
-  if (analyzeBtn && !analyzeBtn.disabled) {
-    analyzeBtn.textContent = conf.analyzeText;
+  if (analyzeBtn) {
+    if (!conf.trained) {
+      analyzeBtn.disabled = true;
+      analyzeBtn.textContent = "Domain Not Trained (Placeholder)";
+    } else {
+      analyzeBtn.disabled = !selectedFile;
+      analyzeBtn.textContent = conf.analyzeText;
+    }
   }
 
   showToast(`Switched inspection domain to ${conf.title}`, "info");
@@ -200,8 +209,14 @@ function handleFileSelected(file) {
         <div><strong>Target Domain:</strong> ${escapeHtml(conf.title)}</div>
       `;
       preview.style.display = "flex";
-      analyzeBtn.disabled = false;
-      analyzeBtn.textContent = conf.analyzeText;
+      if (!conf.trained) {
+        analyzeBtn.disabled = true;
+        analyzeBtn.textContent = "Domain Not Trained (Placeholder)";
+        showToast(`The ${conf.title} domain is an untrained placeholder. Inference is disabled.`, "warning");
+      } else {
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = conf.analyzeText;
+      }
     };
     imgObj.src = e.target.result;
   };

@@ -1,11 +1,14 @@
 {
-  "status": "PENDING_DATASET",
-  "message": "TODO: Provide data/casting_data dataset and execute training/train_image.py",
-  "model": "MobileNetV2 Transfer Learning",
+  "status": "PENDING_EVALUATION",
+  "model": "MobileNetV2 Transfer Learning (Casting Product Defect)",
+  "dataset": "Casting Product Image Quality Dataset (ravirajsinh45/real-life-industrial-dataset-of-casting-product)",
+  "task": "Binary Image Classification (ok_front vs def_front)",
   "accuracy": null,
   "precision": null,
   "recall": null,
   "f1_score": null,
   "roc_auc": null,
-  "confusion_matrix": null
+  "confusion_matrix": null,
+  "file_path": "models/casting_defect_classifier.h5",
+  "note": "Weights present in models/casting_defect_classifier.h5, pending verification on held-out test split via training/evaluate_image.py."
 }

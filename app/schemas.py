@@ -172,12 +172,21 @@ class HealthLiveResponse(BaseModel):
     timestamp: str
 
 
+class DomainReadiness(BaseModel):
+    loaded: bool = Field(description="Whether model weights are loaded into memory")
+    trained: bool = Field(description="Whether model has been verified on real training/evaluation data")
+    status: str = Field(description="'TRAINED', 'UNTRAINED_PLACEHOLDER', or 'PENDING_EVALUATION'")
+
+
 class HealthReadyResponse(BaseModel):
     status: str
     image_model_loaded: bool
     sensor_model_loaded: bool
     wear_model_loaded: bool
     timestamp: str
+    domains: Optional[Dict[str, DomainReadiness]] = Field(
+        default=None, description="Per-domain load and trained status"
+    )
 
 
 class LegacyHealthResponse(BaseModel):
@@ -202,3 +211,19 @@ class ModelInfo(BaseModel):
 
 class ModelsMetadataResponse(BaseModel):
     models: List[ModelInfo]
+
+
+class DomainInfo(BaseModel):
+    id: str = Field(description="Domain identifier for API routing")
+    name: str = Field(description="Human readable domain label")
+    trained: bool = Field(description="Whether domain model has completed real training")
+    status: str = Field(description="Readiness status ('TRAINED', 'UNTRAINED_PLACEHOLDER', 'BLOCKED_PENDING_DOWNLOAD', 'FUTURE_WORK')")
+    dataset: str = Field(description="Underlying dataset name and source")
+    license: str = Field(description="Dataset license terms")
+    classes: List[str] = Field(description="Target inspection classes")
+    metrics_summary: Optional[Dict[str, Any]] = Field(default=None, description="Summary of real test metrics")
+    note: Optional[str] = Field(default=None, description="Operational notes or blocking requirements")
+
+
+class DomainsResponse(BaseModel):
+    domains: List[DomainInfo]

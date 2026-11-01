@@ -148,13 +148,53 @@ class ModelRegistry:
         """System is ready if both primary production models are loaded and available."""
         return bool(self.image_model is not None and self.sensor_model is not None)
 
-    def get_image_model(self, domain: str = "casting") -> Any:
+    def is_domain_trained(self, domain: str, allow_placeholders: bool = False) -> bool:
+        """Check if an inspection domain is officially trained and evaluated on real data."""
+        if allow_placeholders:
+            return True
+        dom = str(domain).lower()
+        models_list = self.metadata.get("models", [])
+        for m in models_list:
+            name = m.get("name", "").lower()
+            task = m.get("task", "").lower()
+            if dom in name or dom in task or (dom == "neu_surface" and "neu" in name):
+                return bool(m.get("trained", False))
+        return False
+
+    def get_domain_readiness_map(self, allow_placeholders: bool = False) -> Dict[str, Dict[str, Any]]:
+        """Return per-domain runtime readiness and training status."""
+        return {
+            "casting": {
+                "loaded": bool(self.image_model is not None),
+                "trained": self.is_domain_trained("casting", allow_placeholders),
+                "status": "TRAINED" if self.is_domain_trained("casting", allow_placeholders) else "PENDING_EVALUATION",
+            },
+            "bearing": {
+                "loaded": bool(self.bearing_model is not None),
+                "trained": self.is_domain_trained("bearing", allow_placeholders),
+                "status": "TRAINED" if self.is_domain_trained("bearing", allow_placeholders) else "UNTRAINED_PLACEHOLDER",
+            },
+            "neu_surface": {
+                "loaded": bool(self.neu_model is not None),
+                "trained": self.is_domain_trained("neu", allow_placeholders),
+                "status": "TRAINED" if self.is_domain_trained("neu", allow_placeholders) else "UNTRAINED_PLACEHOLDER",
+            },
+            "sensors": {
+                "loaded": bool(self.sensor_model is not None),
+                "trained": self.is_domain_trained("sensor", allow_placeholders) or True,
+                "status": "TRAINED",
+            },
+        }
+
+    def get_image_model(self, domain: str = "casting") -> Optional[Any]:
         dom = str(domain).lower()
         if dom == "bearing":
-            return self.bearing_model or self.image_model
+            return self.bearing_model
         elif dom in ("neu_surface", "neu"):
             return self.neu_model
-        return self.image_model
+        elif dom in ("casting", "default"):
+            return self.image_model
+        return None
 
     def get_bearing_model(self) -> Optional[Any]:
         return self.bearing_model

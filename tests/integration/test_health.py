@@ -16,6 +16,12 @@ def test_health_ready_nominal(client):
     assert data["status"] == "ready"
     assert data["image_model_loaded"] is True
     assert data["sensor_model_loaded"] is True
+    assert "domains" in data
+    domains = data["domains"]
+    assert domains["bearing"]["trained"] is False
+    assert domains["neu_surface"]["trained"] is False
+    assert domains["casting"]["loaded"] is True
+    assert domains["sensors"]["trained"] is True
 
 
 def test_health_ready_failure_when_model_missing(client):

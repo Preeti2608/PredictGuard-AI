@@ -36,6 +36,19 @@ class ModelNotLoadedException(AppException):
         )
 
 
+class ModelNotTrainedException(AppException):
+    def __init__(self, domain_or_model: str, message: Optional[str] = None):
+        msg = (
+            message
+            or f"Model for inspection domain '{domain_or_model}' is an untrained placeholder and cannot serve production predictions."
+        )
+        super().__init__(
+            message=msg,
+            error_code="MODEL_NOT_TRAINED",
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+        )
+
+
 class ImageValidationException(AppException):
     def __init__(self, message: str, status_code: int = status.HTTP_400_BAD_REQUEST, details: Optional[Any] = None):
         super().__init__(

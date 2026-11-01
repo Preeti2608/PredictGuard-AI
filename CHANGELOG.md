@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2026-11-01
+
+### Added
+- **ML Honesty & Multi-Domain Audit Engine**:
+  - `training/metrics_io.py`: Centralized engine for computing and atomically persisting test metrics and model metadata without manual intervention.
+  - `training/evaluate_image.py`: Standalone evaluation engine for casting model on held-out test split using production nearest-neighbor preprocessing.
+  - `training/train_neu.py`: Two-stage MobileNetV2 transfer learning on NEU 6-class steel strip dataset with stratified 70/15/15 splits persisted to `data/neu_splits.json`.
+  - `training/ensemble_images.py`: MobileNetV2 1,280-D feature embedding extraction with Soft Voting, AdaBoost, and Stacking ensembles.
+  - `training/cluster_images.py`: Unsupervised K-Means ($k=2..8$, SSE elbow comparison, silhouette) and Ward hierarchical clustering.
+  - `training/train_anomaly.py`: Unsupervised MVTec AD anomaly detection with Isolation Forest and kNN distance scorers.
+  - `GET /v1/domains`: Endpoint returning per-domain training status, underlying dataset, licensing terms, and target classes.
+  - `docs/DATASETS.md`: Full provenance register covering sources, licenses, citations, and readiness states.
+  - `tests/unit/test_honesty_and_metrics.py`: Strict regression tests enforcing metric agreement, metadata alignment, and 503 guards.
+
+### Changed
+- **Honesty Cleanup & Model Guards**:
+  - Reset untrained placeholder metrics to `null` with status `UNTRAINED_PLACEHOLDER` in `docs/metrics/bearing_metrics.json` and `docs/metrics/neu_metrics.json`.
+  - Enforced HTTP 503 `MODEL_NOT_TRAINED` on inference requests to untrained domains unless `ALLOW_PLACEHOLDER_MODELS=true`.
+  - Reconciled sensor model to `models/sensor_failure_calibrated.joblib` across `app/config.py`, `models/model_metadata.json`, and `docs/metrics/sensor_metrics.json`.
+  - Renamed `scripts/build_starter_models.py` to `scripts/dev_placeholder_models.py` with loud warning headers.
+  - Renamed synthetic placeholder sample images with `synthetic_` prefix.
+  - Updated `/health/ready` probe to report per-domain `loaded` and `trained` readiness.
+  - Audited Bearing and VisA datasets and moved to Future Work pending verified ground truth labels and license verification.
+
+---
+
 ## [1.0.0] - 2026-10-21
 
 ### Added

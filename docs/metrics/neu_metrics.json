@@ -1,5 +1,5 @@
 {
-  "status": "INITIALIZED",
+  "status": "UNTRAINED_PLACEHOLDER",
   "model": "MobileNetV2 Transfer Learning (NEU Multi-Class Surface Defect)",
   "dataset": "NEU Surface Defect Database (6 classes, 1,800 images)",
   "task": "6-Class Hot-Rolled Steel Strip Defect Classification",
@@ -14,11 +14,12 @@
     "scratches"
   ],
   "benchmark": {
-    "accuracy": 0.9650,
-    "top_2_accuracy": 0.9920,
-    "macro_precision": 0.9630,
-    "macro_recall": 0.9650,
-    "macro_f1": 0.9640
+    "accuracy": null,
+    "top_2_accuracy": null,
+    "macro_precision": null,
+    "macro_recall": null,
+    "macro_f1": null
   },
-  "file_path": "models/neu_defect_classifier.keras"
+  "file_path": "models/neu_defect_classifier.keras",
+  "note": "Untrained architectural placeholder created from casting backbone. No held-out test evaluation has been executed."
 }
