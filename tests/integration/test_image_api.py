@@ -126,3 +126,21 @@ def test_predict_image_neu_surface_domain(client):
     assert len(data["defect_classes"]) == 6
     assert "pitted_surface" in data["defect_classes"]
     assert "scratches" in data["defect_classes"]
+
+
+def test_predict_image_perspective_mismatch_warning(client):
+    img_path = SAMPLE_DIR / "sample_catalog_impeller.jpeg"
+    assert img_path.exists(), "Sample catalog impeller image missing"
+
+    with open(img_path, "rb") as f:
+        files = {"file": ("sample_catalog_impeller.jpeg", f, "image/jpeg")}
+        res = client.post("/v1/predict/image", files=files, data={"domain": "casting"})
+
+    assert res.status_code == 200
+    data = res.json()
+    assert data["prediction"] == "perspective_warning"
+    assert "Invalid Inspection Perspective" in data["label"]
+    assert data["risk_level"] == "MEDIUM"
+    assert "Likely false positive" in data["recommended_action"]
+    assert "Perspective Anomaly Detected" in data["note"]
+

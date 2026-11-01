@@ -230,12 +230,23 @@ async function handleAnalyze() {
     lastImageResult = res;
 
     // Render gauge
-    gaugeSlot.innerHTML = renderSvgGauge(res.defect_probability, res.risk_level, "Defect Probability");
+    const isPerspectiveWarning = res.prediction === "perspective_warning";
+    const gaugeTitle = isPerspectiveWarning ? "Perspective Uncertainty" : "Defect Probability";
+    gaugeSlot.innerHTML = renderSvgGauge(res.defect_probability, res.risk_level, gaugeTitle);
 
     // Populate metadata
     labelElem.textContent = res.label;
-    badgeElem.textContent = `${res.risk_level} RISK`;
-    badgeElem.className = `badge badge-${res.risk_level.toLowerCase()}`;
+    if (isPerspectiveWarning) {
+      badgeElem.textContent = "PERSPECTIVE WARNING";
+      badgeElem.className = "badge badge-medium";
+      actionElem.style.borderColor = "var(--status-warning-border)";
+      actionElem.style.backgroundColor = "var(--status-warning-bg)";
+    } else {
+      badgeElem.textContent = `${res.risk_level} RISK`;
+      badgeElem.className = `badge badge-${res.risk_level.toLowerCase()}`;
+      actionElem.style.borderColor = "var(--border-default)";
+      actionElem.style.backgroundColor = "var(--bg-surface-subtle)";
+    }
     actionElem.textContent = res.recommended_action;
     latencyElem.textContent = `${res.latency_ms} ms`;
     reqIdElem.textContent = res.request_id;

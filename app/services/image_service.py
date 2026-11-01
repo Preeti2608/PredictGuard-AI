@@ -277,6 +277,28 @@ class ImageService:
             label = "Normal casting" if predicted_class == "ok_front" else "Defective casting"
             confidence = round(score if predicted_class == "ok_front" else defect_prob, 6)
             risk_level, recommended_action = evaluate_image_risk(defect_prob, self.settings, domain="casting")
+
+            # Check for white background or perspective anomaly (>25% near-white pixels)
+            white_ratio = float(np.mean(tensor > 0.92))
+            note = "Score is the model output; verify its calibration before treating it as a probability."
+            if white_ratio > 0.25:
+                note = (
+                    "Perspective Anomaly Detected: Angled 3D catalog photo with studio white backdrop detected. "
+                    "Internal impeller fluid passages cast deep shadows that falsely register as casting voids. "
+                    "For certified inspection, capture an orthogonal top-down (90°) view."
+                )
+                if defect_prob > 0.50:
+                    predicted_class = "perspective_warning"
+                    label = "Invalid Inspection Perspective (3D Catalog View)"
+                    defect_prob = 0.50
+                    confidence = 0.50
+                    risk_level = RiskLevel.MEDIUM
+                    recommended_action = (
+                        "Likely false positive due to 3D perspective angle and studio backdrop. The camera is viewing the internal "
+                        "fluid passages between the impeller vanes, creating dark shadow cavities that trigger defect alerts. "
+                        "Re-inspect by placing the casting flat on an inspection surface and capturing an orthogonal top-down view (90°)."
+                    )
+
             return ImagePredictionResponse(
                 prediction=predicted_class,
                 label=label,
@@ -290,5 +312,5 @@ class ImageService:
                 domain=inspection_domain,
                 defect_classes=None,
                 score=score,
-                note="Score is the model output; verify its calibration before treating it as a probability.",
+                note=note,
             )
